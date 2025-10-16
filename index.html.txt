@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+window.open(url, '_blank');
+}
+
+
+// Form submit → WhatsApp al vendedor
+$('#orderForm').addEventListener('submit', e=>{
+e.preventDefault();
+if(cart.length===0){ alert('Tu carrito está vacío.'); return; }
+const fd = new FormData(e.target);
+const nombre = fd.get('nombre');
+const direccion = fd.get('direccion');
+const zona = fd.get('zona');
+const cuando = fd.get('cuando');
+const tel = fd.get('telefono');
+const pago = fd.get('pago');
+const notas = fd.get('notas');
+
+
+const d = cuando? new Date(cuando): null;
+if(zona==='Otra'){ $('#zonaWarn').classList.remove('hidden'); } else { $('#zonaWarn').classList.add('hidden'); }
+const dentroHorario = d? isServiceTime(d): false;
+
+
+const lines = [];
+lines.push(`Nuevo pedido — Capialitas Jaz`);
+lines.push('');
+cart.forEach((item,idx)=>{
+lines.push(`${idx+1}. ${item.qty} x ${item.nombre} — ${money(item.precio*item.qty)}`);
+const cfg = formatConfig(item.config); if(cfg) lines.push(` · ${cfg}`);
+});
+const total = cart.reduce((s,i)=>s+i.precio*i.qty,0);
+lines.push('');
+lines.push(`Total: ${money(total)}`);
+if(pago==='apartado'){ lines.push(`Apartado 50%: ${money(Math.round(total*0.5))}`); }
+lines.push('');
+lines.push(`Cliente: ${nombre}`);
+if(tel) lines.push(`Tel: ${tel}`);
+lines.push(`Dirección: ${direccion}`);
+lines.push(`Zona: ${zona}${zona==='Otra'?' (posible fuera de zona)':''}`);
+if(cuando){ lines.push(`Entrega: ${new Date(cuando).toLocaleString('es-MX')}${dentroHorario?'':' (fuera de horario, pre-orden)'}`); }
+if(notas) lines.push(`Notas: ${notas}`);
+lines.push('');
+lines.push(`Pago: ${pago==='efectivo'?'Efectivo a la entrega':pago==='transferencia'?'Transferencia (completo)':pago==='apartado'?'Apartado 50%':'Pago en línea'}`);
+if(pago==='online'){
+lines.push(`Link pago total: ${PAYMENT_URL_FULL}`);
+lines.push(`Link 50%: ${PAYMENT_URL_DEPOSIT}`);
+}
+lines.push('Confirmo disponibilidad y hora de entrega.');
+
+
+const text = encodeURIComponent(lines.join('
+'));
+const url = `https://wa.me/${SELLER_WA}?text=${text}`;
+window.open(url, '_blank');
+});
+
+
+// Mostrar/ocultar caja de pago online
+$$('input[name="pago"]').forEach(r=>{
+r.addEventListener('change', ()=>{
+$('#onlinePayBox').classList.toggle('hidden', r.value!=='online' || !r.checked);
+});
+});
+
+
+// Inicializar
+renderMenu();
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Capialitas - Menú Digital</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; background: #fff8f0; color: #333; }
+    h1,h2,h3 { color: #d35400; }
+    .menu-container { display: flex; flex-wrap: wrap; gap: 15px; }
+    .menu-item { border: 1px solid #ccc; padding: 10px; width: 200px; border-radius: 10px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .menu-item img { width: 100%; border-radius: 10px; }
+    .cart-item { margin-bottom: 5px; }
+    button { margin: 2px; cursor: pointer; }
+    #cart { margin-top: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 10px; background: #fff3e0; }
+    #onlinePayBox { padding: 5px; background: #f0f0f0; border-radius: 5px; margin: 5px 0; }
+    input[type="number"] { width: 50px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>Capialitas - Menú y Pedido</h1>
+
+  <!-- Menú dinámico -->
+  <div id="menu" class="menu-container"></div>
+
+  <!-- Carrito -->
+  <div id="cart">
+    <h2>Carrito</h2>
+    <ul id="cartList"></ul>
+    <p>Total: <span id="cartTotal">$0.00</span></p>
+  </div>
+
+  <!-- Formulario -->
+  <form id="orderForm">
+    <h2>Datos del Cliente</h2>
+    <input type="text" name="nombre" placeholder="Nombre" required><br>
+    <input type="text" name="telefono" placeholder="Teléfono"><br>
+    <input type="text" name="direccion" placeholder="Dirección" required><br>
+    <select name="zona" required>
+      <option value="">Selecciona zona</option>
+      <option value="Juárez">Juárez</option>
+      <option value="Cadete">Cadete</option>
+      <option value="Plan de Ayala">Plan de Ayala</option>
+      <option value="Molino">Molino</option>
+      <option value="Otra">Otra</option>
+    </select>
+    <div id="zonaWarn" class="hidden" style="color:red;">⚠ Posible fuera de zona</div>
+    <input type="datetime-local" name="cuando"><br>
+
+    <h3>Pago</h3>
+    <input type="radio" name="pago" value="efectivo" checked>Efectivo<br>
+    <input type="radio" name="pago" value="transferencia">Transferencia<br>
+    <input type="radio" name="pago" value="apartado">Apartado 50%<br>
+    <input type="radio" name="pago" value="online">Pago en línea<br>
+
+    <div id="onlinePayBox" class="hidden">
+      <p>Se mostrará link de pago aquí</p>
+    </div>
+
+    <textarea name="notas" placeholder="Notas adicionales"></textarea><br>
+
+    <button type="submit">Enviar pedido</button>
+  </form>
+
+  <footer>
+    <p>&copy; <span id="year"></span> Capialitas</p>
+  </footer>
+
+  <script>
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => document.querySelectorAll(selector);
+
+    const SELLER_WA = "5211234567890"; // Cambiar por tu número
+    const PAYMENT_URL_FULL = "https://link-pago-total.com";
+    const PAYMENT_URL_DEPOSIT = "https://link-pago-50.com";
+
+    const money = amount => `$${amount.toFixed(2)}`;
+    const formatConfig = arr => arr && arr.length ? arr.join(", ") : "";
+    const isServiceTime = d => { const h = d.getHours(); return h >= 17 && h <= 21; }
+
+    // Menú con imágenes reales (reemplaza los URLs por tus imágenes)
+    const menuItems = [
+      { nombre: "Hamburguesa Hawaiana", precio: 44, img: "https://via.placeholder.com/200?text=Hamburguesa", opciones: ["Mayonesa","Catsup","Jitomate","Chiles","Lechuga","Queso Gouda"] },
+      { nombre: "Hot Dog Especial", precio: 35, img: "https://via.placeholder.com/200?text=Hot+Dog", opciones: ["Mayonesa","Catsup","Pico de Gallo","Guacamole","Tocino"] },
+      { nombre: "Alitas Pica Fresa", precio: 50, img: "https://via.placeholder.com/200?text=Alitas+Pica+Fresa", opciones: [] }
+    ];
+
+    let cart = [];
+
+    const renderMenu = () => {
+      const menuDiv = $('#menu');
+      menuDiv.innerHTML = '';
+      menuItems.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'menu-item';
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.nombre}">
+          <strong>${item.nombre} — ${money(item.precio)}</strong><br>
+          Cantidad: <input type="number" min="0" value="0" id="qty_${idx}"><br>
+          ${item.opciones.length>0 ? 'Opciones: ' + item.opciones.map(opt => `<label><input type="checkbox" value="${opt}" id="opt_${idx}_${opt}"> ${opt}</label>`).join(' ') : ''}
+          <br><button type="button" id="add_${idx}">Agregar al carrito</button>
+        `;
+        menuDiv.appendChild(div);
+
+        $(`#add_${idx}`).addEventListener('click', () => {
+          const qty = parseInt($(`#qty_${idx}`).value);
+          if(qty<=0){ alert('Ingresa una cantidad válida'); return; }
+          const selectedOptions = item.opciones.filter(opt => $(`#opt_${idx}_${opt}`).checked);
+          const existing = cart.find(c => c.nombre===item.nombre && formatConfig(c.config)===formatConfig(selectedOptions));
+          if(existing){ existing.qty += qty; } 
+          else { cart.push({ nombre: item.nombre, qty, precio: item.precio, config: selectedOptions }); }
+          renderCart();
+        });
+      });
+    }
+
+    const renderCart = () => {
+      const cartList = $('#cartList');
+      cartList.innerHTML = '';
+      let total = 0;
+      cart.forEach((item, idx) => {
+        total += item.qty*item.precio;
+        const li = document.createElement('li');
+        li.className = 'cart-item';
+        li.innerHTML = `
+          ${item.qty} x ${item.nombre} — ${money(item.qty*item.precio)} ${item.config.length>0?'('+formatConfig(item.config)+')':''}
+          <button type="button" class="minus_${idx}">-</button>
+          <button type="button" class="plus_${idx}">+</button>
+          <button type="button" class="del_${idx}">Eliminar</button>
+        `;
+        cartList.appendChild(li);
+
+        $(`.minus_${idx}`).addEventListener('click', ()=>{ if(item.qty>1){ item.qty--; renderCart(); }});
+        $(`.plus_${idx}`).addEventListener('click', ()=>{ item.qty++; renderCart(); });
+        $(`.del_${idx}`).addEventListener('click', ()=>{ cart.splice(idx,1); renderCart(); });
+      });
+      $('#cartTotal').textContent = money(total);
+    }
+
+    $('#orderForm').addEventListener('submit', e=>{
+      e.preventDefault();
+      if(cart.length===0){ alert('Tu carrito está vacío.'); return; }
+
+      const fd = new FormData(e.target);
+      const nombre = fd.get('nombre');
+      const direccion = fd.get('direccion');
+      const zona = fd.get('zona');
+      const cuando = fd.get('cuando');
+      const tel = fd.get('telefono');
+      const pago = fd.get('pago');
+      const notas = fd.get('notas');
+      const d = cuando? new Date(cuando): null;
+      if(zona==='Otra'){ $('#zonaWarn').classList.remove('hidden'); } else { $('#zonaWarn').classList.add('hidden'); }
+      const dentroHorario = d? isServiceTime(d): false;
+
+      const lines = [];
+      lines.push(`Nuevo pedido — Capialitas Jaz\n`);
+      cart.forEach((item, idx)=>{
+        lines.push(`${idx+1}. ${item.qty} x ${item.nombre} — ${money(item.qty*item.precio)}`);
+        if(item.config.length>0) lines.push(` · ${formatConfig(item.config)}`);
+      });
+
+      const total = cart.reduce((s,i)=>s+i.precio*i.qty,0);
+      lines.push(`\nTotal: ${money(total)}`);
+      if(pago==='apartado'){ lines.push(`Apartado 50%: ${money(Math.round(total*0.5))}`); }
+      lines.push(`\nCliente: ${nombre}`);
+      if(tel) lines.push(`Tel: ${tel}`);
+      lines.push(`Dirección: ${direccion}`);
+      lines.push(`Zona: ${zona}${zona==='Otra'?' (posible fuera de zona)':''}`);
+      if(cuando){ lines.push(`Entrega: ${new Date(cuando).toLocaleString('es-MX')}${dentroHorario?'':' (fuera de horario, pre-orden)'}`); }
+      if(notas) lines.push(`Notas: ${notas}`);
+      lines.push(`\nPago: ${pago==='efectivo'?'Efectivo a la entrega':pago==='transferencia'?'Transferencia (completo)':pago==='apartado'?'Apartado 50%':'Pago en línea'}`);
+      if(pago==='online'){ lines.push(`Link pago total: ${PAYMENT_URL_FULL}`); lines.push(`Link 50%: ${PAYMENT_URL_DEPOSIT}`); }
+      lines.push('\nConfirmo disponibilidad y hora de entrega.');
+
+      const text = encodeURIComponent(lines.join('\n'));
+      const url = `https://wa.me/${SELLER_WA}?text=${text}`;
+      window.open(url,'_blank');
+    });
+
+    $$('input[name="pago"]').forEach(r=>{
+      r.addEventListener('change', ()=>{
+        $('#onlinePayBox').classList.toggle('hidden', r.value!=='online' || !r.checked);
+      });
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+    renderMenu();
+  </script>
+
+</body>
+</html>
