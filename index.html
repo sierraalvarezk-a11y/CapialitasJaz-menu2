@@ -1,62 +1,125 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Capialitas Jaz - Menú Digital</title>
-<link rel="icon" href="favicon.ico" />
-<style>
-body { font-family: 'Poppins', sans-serif; margin: 20px; background: linear-gradient(180deg, #fff5ef 0%, #ffe9df 100%); color: #2c2c2c; }
-h1 { color: #e43b3b; text-align: center; margin-bottom: 10px; }
-h2 { color: #e43b3b; border-bottom: 2px solid #ff9999; padding-bottom: 5px; }
-.menu-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
-.menu-item { border: 1px solid #eee; border-radius: 15px; background: white; padding: 15px; width: 250px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: transform 0.2s; }
-.menu-item:hover { transform: scale(1.02); }
-.menu-item img { width: 100%; border-radius: 10px; margin-bottom: 10px; }
-.menu-item h3 { margin: 5px 0; color: #e43b3b; font-size: 1.1em; }
-.price { font-weight: bold; color: #000; }
-.add-btn { background: #e43b3b; color: white; border: none; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
-.add-btn:hover { background: #c92e2e; }
-#cart { background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 15px; margin-top: 20px; }
-#cart h2 { color: #e43b3b; }
-#cartList { list-style: none; padding: 0; margin: 0; }
-.cart-item { margin: 8px 0; display: flex; justify-content: space-between; }
-#cartTotal { font-weight: bold; }
-button.checkout { background: #e43b3b; color: white; border: none; padding: 10px 20px; border-radius: 15px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
-button.checkout:hover { background: #c92e2e; }
-</style>
-</head>
-<body>
-
-
-<header style="text-align:center; margin-bottom:14px;">
-<img src="logo.png" alt="Logo Capialitas Jaz" style="width:120px; height:auto; border-radius:18px; box-shadow:0 6px 20px rgba(228,59,59,.15); display:block; margin:0 auto 12px;" onerror="this.style.display='none'">
-<h1 style="margin:0;">
-<span style="display:block; color:#e43b3b; font-weight:900; letter-spacing:1px;">CAPIALITAS JAZ</span>
-<small style="display:block; color:#9b2c2c99; font-weight:500;">Alitas con sabor y ternura</small>
-</h1>
-</header>
-
-
-<div class="menu-container" id="menu"></div>
-
-
-<div id="cart">
-<h2>Tu pedido</h2>
-<ul id="cartList"></ul>
-<p>Total: <span id="cartTotal">$0.00</span></p>
-<button class="checkout" onclick="checkout()">Enviar por WhatsApp</button>
-</div>
-
-
 <script>
+// ===== CONFIG =====
 const SELLER_WA = '525636364089';
+const money = n => `$${Number(n).toFixed(2)}`;
+
+// ===== DATA (menú de la captura) =====
 const menuItems = [
-{ nombre: 'Alitas (7 pz)', precio: 75, desc: 'Lechuga, zanahoria, pepino, aderezo' },
-{ nombre: 'Alitas (12 pz)', precio: 110, desc: 'Lechuga, zanahoria, pepino, aderezo' },
-{ nombre: 'Alitas (24 pz)', precio: 205, desc: 'Lechuga, zanahoria, pepino, aderezo' },
-{ nombre: 'Capy Gusto', precio: 115, desc: 'Alitas (7 pz) + Papas fritas' },
-{ nombre: 'Capy Caja Loca', precio: 150, desc: 'Alitas (12 pz) + Papas fritas' },
-{ nombre: 'Capy Fiesta', precio: 245, desc: 'Alitas (24 pz) + Papas fritas' },
-{ nombre: 'Capy Mordida Max', precio: 105, desc: 'Hamburguesa clásica + Papas fritas' },
-</html>
+  // Alitas
+  { cat:'Alitas', nombre:'Alitas (7 pz)', precio:75,  desc:'Lechuga, zanahoria, pepino, aderezo' },
+  { cat:'Alitas', nombre:'Alitas (12 pz)', precio:110, desc:'Lechuga, zanahoria, pepino, aderezo' },
+  { cat:'Alitas', nombre:'Alitas (24 pz)', precio:205, desc:'Lechuga, zanahoria, pepino, aderezo' },
+  // Combos
+  { cat:'Combos', nombre:'Capy Gusto',      precio:115, desc:'Alitas (7 pz) + Papas fritas' },
+  { cat:'Combos', nombre:'Capy Caja Loca',  precio:150, desc:'Alitas (12 pz) + Papas fritas' },
+  { cat:'Combos', nombre:'Capy Fiesta',     precio:245, desc:'Alitas (24 pz) + Papas fritas' },
+  { cat:'Combos', nombre:'Capy Mordida Max',precio:105, desc:'Hamburguesa clásica + Papas fritas' },
+  { cat:'Combos', nombre:'Combo Chill',     precio:130, desc:'Hamburguesa doble carne + Papas fritas' },
+  { cat:'Combos', nombre:'Capialitas… ¡Unidos!', precio:335, desc:'5 Mini Hamburguesas + 5 Mini Banderillas + Papas + Hamburguesa clásica + Alitas (300g)' },
+];
+
+// ===== ESTADO =====
+let cart = [];
+
+// ===== RENDER MENÚ =====
+function renderMenu(){
+  const container = document.getElementById('menu');
+  container.innerHTML = '';
+
+  const cats = ['Alitas','Combos'];
+  cats.forEach(cat=>{
+    // Card de categoría
+    const card = document.createElement('div');
+    card.className = 'menu-card';
+    card.innerHTML = `
+      <div class="menu-card__wrap">
+        <h2 class="menu-title">${cat}</h2>
+        <div class="menu-list"></div>
+      </div>`;
+    container.appendChild(card);
+
+    const list = card.querySelector('.menu-list');
+    menuItems.filter(i=>i.cat===cat).forEach((item, idx)=>{
+      const row = document.createElement('div');
+      row.className = 'menu-row';
+      row.innerHTML = `
+        <div class="menu-info">
+          <div class="item-name">${item.nombre}</div>
+          <div class="item-desc">${item.desc||''}</div>
+        </div>
+        <div class="item-price">${money(item.precio)}</div>
+        <button class="add-btn" data-idx="${menuItems.indexOf(item)}">Agregar</button>
+      `;
+      list.appendChild(row);
+    });
+  });
+
+  // botones Agregar
+  document.querySelectorAll('.add-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = parseInt(btn.dataset.idx,10);
+      addToCart(menuItems[i]);
+    });
+  });
+}
+
+// ===== CARRITO =====
+function addToCart(item){
+  // permite repetir el mismo producto varias veces
+  cart.push({ nombre:item.nombre, precio:item.precio, qty:1 });
+  renderCart();
+}
+
+function renderCart(){
+  const ul = document.getElementById('cartList');
+  const totalEl = document.getElementById('cartTotal');
+  ul.innerHTML = '';
+  let total = 0;
+
+  cart.forEach((it, i)=>{
+    total += it.precio * it.qty;
+    const li = document.createElement('li');
+    li.className = 'cart-item';
+    li.innerHTML = `
+      ${it.qty}× ${it.nombre}
+      <span>${money(it.precio * it.qty)}</span>
+    `;
+    ul.appendChild(li);
+  });
+
+  totalEl.textContent = money(total);
+}
+
+// ===== CHECKOUT (WhatsApp) =====
+function checkout(){
+  if(cart.length===0){ alert('Tu carrito está vacío'); return; }
+  const lines = cart.map(i=>`${i.qty}× ${i.nombre} - ${money(i.precio*i.qty)}`);
+  const total = cart.reduce((s,i)=>s+i.precio*i.qty,0);
+  lines.push(`Total: ${money(total)}`);
+  const text = encodeURIComponent(lines.join('\\n'));
+  window.open(`https://wa.me/${SELLER_WA}?text=${text}`, '_blank');
+}
+
+// ===== ESTILOS RÁPIDOS (clases usadas arriba) =====
+const style = document.createElement('style');
+style.textContent = `
+  .menu-card { background:#fff; border:1px solid #f2d0d0; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.06); margin:14px 0; }
+  .menu-card__wrap { padding:16px 18px; }
+  .menu-title { color:#e43b3b; font-weight:800; font-size:20px; margin-bottom:6px; }
+  .menu-list { display:flex; flex-direction:column; }
+  .menu-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid #ffe0e0; }
+  .menu-row:first-child { border-top:0; }
+  .menu-info { flex:1; }
+  .item-name { font-weight:700; }
+  .item-desc { font-size:13px; color:#6b7280; }
+  .item-price { width:70px; text-align:right; font-weight:700; }
+  .add-btn { background:#e43b3b; color:#fff; border:0; border-radius:12px; padding:8px 14px; font-weight:700; cursor:pointer; }
+  .add-btn:active { transform:scale(.98); background:#c92828; }
+`;
+document.head.appendChild(style);
+
+// ===== INICIO =====
+renderMenu();
+renderCart();
+</script>
+
