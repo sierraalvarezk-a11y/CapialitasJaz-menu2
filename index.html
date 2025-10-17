@@ -1,214 +1,62 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Capialitas - Menú Digital</title>
-  <style>
-body { background: #fff8f0; color: #333; }
-    h1,h2,h3 { color: #f4b000; } /* Amarillo EBAC o tu color */
-    .menu-container { display:flex; flex-wrap:wrap; gap:15px; }
-    .menu-item { border:1px solid #ccc; padding:10px; width:220px; border-radius:10px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,.08); }
-    .menu-item img { width:100%; border-radius:10px; }
-    .cart-item { margin-bottom:5px; }
-    button { margin:2px; cursor:pointer; }
-    #cart { margin-top:20px; padding:10px; border:1px solid #ccc; border-radius:10px; background:#fff3e0; }
-    #onlinePayBox { padding:6px; background:#f0f0f0; border-radius:6px; margin:6px 0; }
-    input[type="number"]{ width:60px; }
-    .hidden{ display:none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capialitas Jaz - Menú Digital</title>
+<link rel="icon" href="favicon.ico" />
+<style>
+body { font-family: 'Poppins', sans-serif; margin: 20px; background: linear-gradient(180deg, #fff5ef 0%, #ffe9df 100%); color: #2c2c2c; }
+h1 { color: #e43b3b; text-align: center; margin-bottom: 10px; }
+h2 { color: #e43b3b; border-bottom: 2px solid #ff9999; padding-bottom: 5px; }
+.menu-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
+.menu-item { border: 1px solid #eee; border-radius: 15px; background: white; padding: 15px; width: 250px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: transform 0.2s; }
+.menu-item:hover { transform: scale(1.02); }
+.menu-item img { width: 100%; border-radius: 10px; margin-bottom: 10px; }
+.menu-item h3 { margin: 5px 0; color: #e43b3b; font-size: 1.1em; }
+.price { font-weight: bold; color: #000; }
+.add-btn { background: #e43b3b; color: white; border: none; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+.add-btn:hover { background: #c92e2e; }
+#cart { background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 15px; margin-top: 20px; }
+#cart h2 { color: #e43b3b; }
+#cartList { list-style: none; padding: 0; margin: 0; }
+.cart-item { margin: 8px 0; display: flex; justify-content: space-between; }
+#cartTotal { font-weight: bold; }
+button.checkout { background: #e43b3b; color: white; border: none; padding: 10px 20px; border-radius: 15px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+button.checkout:hover { background: #c92e2e; }
+</style>
 </head>
 <body>
-  <h1>Capialitas - Menú y Pedido</h1>
 
-  <!-- Menú dinámico -->
-  <div id="menu" class="menu-container"></div>
 
-  <!-- Carrito -->
-  <div id="cart">
-    <h2>Carrito</h2>
-    <ul id="cartList"></ul>
-    <p>Total: <span id="cartTotal">$0.00</span></p>
-  </div>
+<header style="text-align:center; margin-bottom:14px;">
+<img src="logo.png" alt="Logo Capialitas Jaz" style="width:120px; height:auto; border-radius:18px; box-shadow:0 6px 20px rgba(228,59,59,.15); display:block; margin:0 auto 12px;" onerror="this.style.display='none'">
+<h1 style="margin:0;">
+<span style="display:block; color:#e43b3b; font-weight:900; letter-spacing:1px;">CAPIALITAS JAZ</span>
+<small style="display:block; color:#9b2c2c99; font-weight:500;">Alitas con sabor y ternura</small>
+</h1>
+</header>
 
-  <!-- Formulario -->
-  <form id="orderForm">
-    <h2>Datos del Cliente</h2>
-    <input type="text" name="nombre" placeholder="Nombre" required><br>
-    <input type="text" name="telefono" placeholder="Teléfono"><br>
-    <input type="text" name="direccion" placeholder="Dirección" required><br>
-    <select name="zona" required>
-      <option value="">Selecciona zona</option>
-      <option value="Juárez">Juárez</option>
-      <option value="Cadete Molino">Cadete Molino</option>
-      <option value="Plan de Ayala">Plan de Ayala</option>
-      <option value="San Antonio Zomeyucan">San Antonio Zomeyucan</option>
-      <option value="Bonfil">Bonfil</option>
-      <option value="San Bartolo">San Bartolo</option>
-      <option value="Martires del Rio Blanco">Martires del Rio Blanco</option>
-      <option value="Otra">Otra</option>
-    </select>
-    <div id="zonaWarn" class="hidden" style="color:red;">⚠ Posible fuera de zona</div>
-    <input type="datetime-local" name="cuando"><br>
 
-    <h3>Pago</h3>
-    <label><input type="radio" name="pago" value="efectivo" checked> Efectivo</label><br>
-    <label><input type="radio" name="pago" value="transferencia"> Transferencia</label><br>
-    <label><input type="radio" name="pago" value="apartado"> Apartado 50%</label><br>
-    <label><input type="radio" name="pago" value="online"> Pago en línea</label><br>
+<div class="menu-container" id="menu"></div>
 
-    <div id="onlinePayBox" class="hidden">
-      <p>Se mostrará link de pago aquí</p>
-    </div>
 
-    <textarea name="notas" placeholder="Notas adicionales"></textarea><br>
-    <button type="submit">Enviar pedido</button>
-  </form>
+<div id="cart">
+<h2>Tu pedido</h2>
+<ul id="cartList"></ul>
+<p>Total: <span id="cartTotal">$0.00</span></p>
+<button class="checkout" onclick="checkout()">Enviar por WhatsApp</button>
+</div>
 
-  <footer>
-    <p>&copy; <span id="year"></span> Capialitas</p>
-  </footer>
 
-  <script>
-    // Helpers
-    const $ = s => document.querySelector(s);
-    const $$ = s => document.querySelectorAll(s);
-    const money = n => `$${Number(n).toFixed(2)}`;
-    const formatConfig = arr => arr && arr.length ? arr.join(", ") : "";
-    const isServiceTime = d => { const h = d.getHours(); return h >= 17 && h < 21; };
-
-    // ⚙️ CONFIGURA TU WHATSAPP Y LINKS DE PAGO
-    const SELLER_WA = "525636364089"; // +52 563 636 4089
-    const PAYMENT_URL_FULL = "#";      // reemplaza por tu link de pago total
-    const PAYMENT_URL_DEPOSIT = "#";   // reemplaza por tu link de 50%
-
-    // Menú ejemplo (edítalo con tus productos reales)
-    const menuItems = [
-      { nombre: "Hamburguesa clásica", precio: 65, img: "https://via.placeholder.com/220?text=Hamburguesa", opciones: ["Mayonesa","Mostaza","Jitomate","Catsup","Chiles","Queso Gouda"] },
-      { nombre: "Hamburguesa doble carne", precio: 135, img: "https://via.placeholder.com/220?text=Doble+Carne", opciones: ["Mayonesa","Mostaza","Jitomate","Catsup","Chiles","Lechuga","Queso Gouda"] },
-      { nombre: "Alitas 7 pz", precio: 75, img: "https://via.placeholder.com/220?text=Alitas+7", opciones: ["Queso parmesano","BBQ","Pica fresa","Mandarina habanero"] },
-      { nombre: "Alitas 12 pz", precio: 120, img: "https://via.placeholder.com/220?text=Alitas+12", opciones: ["Queso parmesano","BBQ","Pica fresa","Mandarina habanero"] },
-      { nombre: "Alitas 24 pz", precio: 215, img: "https://via.placeholder.com/220?text=Alitas+24", opciones: ["Queso parmesano","BBQ","Pica fresa","Mandarina habanero"] },
-      { nombre: "Papas con tocino", precio: 55, img: "https://via.placeholder.com/220?text=Papas", opciones: ["Catsup","Salsa","Queso Americano","Tocino dorado"] }
-    ];
-
-    let cart = [];
-
-    function renderMenu() {
-      const menuDiv = $('#menu');
-      menuDiv.innerHTML = '';
-      menuItems.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.className = 'menu-item';
-        div.innerHTML = `
-          <img src="${item.img}" alt="${item.nombre}">
-          <strong>${item.nombre} — ${money(item.precio)}</strong><br>
-          Cantidad: <input type="number" min="1" value="1" id="qty_${idx}"><br>
-          ${item.opciones.length>0 ? ('Opciones: ' + item.opciones.map(opt => `
-            <label><input type="checkbox" value="${opt}" id="opt_${idx}_${opt}"> ${opt}</label>`).join(' ')
-          ) : ''}
-          <br><button type="button" id="add_${idx}">Agregar al carrito</button>
-        `;
-        menuDiv.appendChild(div);
-
-        $(`#add_${idx}`).addEventListener('click', () => {
-          const qty = parseInt($(`#qty_${idx}`).value, 10);
-          if (qty <= 0) { alert('Ingresa una cantidad válida'); return; }
-          const selectedOptions = item.opciones.filter(opt => {
-            const el = document.getElementById(`opt_${idx}_${opt}`);
-            return el && el.checked;
-          });
-          // Permite agregar el mismo producto varias veces con configuraciones distintas
-          cart.push({ nombre: item.nombre, qty, precio: item.precio, config: selectedOptions });
-          renderCart();
-        });
-      });
-    }
-
-    function renderCart() {
-      const cartList = $('#cartList');
-      cartList.innerHTML = '';
-      let total = 0;
-      cart.forEach((item, idx) => {
-        total += item.qty * item.precio;
-        const li = document.createElement('li');
-        li.className = 'cart-item';
-        li.innerHTML = `
-          ${item.qty} x ${item.nombre} — ${money(item.qty * item.precio)}
-          ${item.config.length ? '(' + formatConfig(item.config) + ')' : ''}
-          <button type="button" class="minus_${idx}">-</button>
-          <button type="button" class="plus_${idx}">+</button>
-          <button type="button" class="del_${idx}">Eliminar</button>
-        `;
-        cartList.appendChild(li);
-
-        document.querySelector(`.minus_${idx}`).addEventListener('click', () => { if (cart[idx].qty > 1) { cart[idx].qty--; renderCart(); } });
-        document.querySelector(`.plus_${idx}`).addEventListener('click', () => { cart[idx].qty++; renderCart(); });
-        document.querySelector(`.del_${idx}`).addEventListener('click', () => { cart.splice(idx, 1); renderCart(); });
-      });
-      $('#cartTotal').textContent = money(total);
-    }
-
-    // Pago online: mostrar/ocultar caja
-    $$('input[name="pago"]').forEach(r => {
-      r.addEventListener('change', () => {
-        $('#onlinePayBox').classList.toggle('hidden', r.value !== 'online' || !r.checked);
-      });
-    });
-
-    // Envío por WhatsApp
-    $('#orderForm').addEventListener('submit', e => {
-      e.preventDefault();
-      if (cart.length === 0) { alert('Tu carrito está vacío.'); return; }
-
-      const fd = new FormData(e.target);
-      const nombre = fd.get('nombre');
-      const direccion = fd.get('direccion');
-      const zona = fd.get('zona');
-      const cuando = fd.get('cuando');
-      const tel = fd.get('telefono');
-      const pago = fd.get('pago');
-      const notas = fd.get('notas');
-
-      const d = cuando ? new Date(cuando) : null;
-      if (zona === 'Otra') { $('#zonaWarn').classList.remove('hidden'); } else { $('#zonaWarn').classList.add('hidden'); }
-      const dentroHorario = d ? isServiceTime(d) : false;
-
-      const lines = [];
-      lines.push(`Nuevo pedido — Capialitas Jaz`);
-      lines.push('');
-      cart.forEach((item, idx) => {
-        lines.push(`${idx + 1}. ${item.qty} x ${item.nombre} — ${money(item.qty * item.precio)}`);
-        if (item.config.length) lines.push(` · ${formatConfig(item.config)}`);
-      });
-      const total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
-      lines.push('');
-      lines.push(`Total: ${money(total)}`);
-      if (pago === 'apartado') { lines.push(`Apartado 50%: ${money(Math.round(total * 0.5))}`); }
-      lines.push('');
-      lines.push(`Cliente: ${nombre}`);
-      if (tel) lines.push(`Tel: ${tel}`);
-      lines.push(`Dirección: ${direccion}`);
-      lines.push(`Zona: ${zona}${zona === 'Otra' ? ' (posible fuera de zona)' : ''}`);
-      if (cuando) { lines.push(`Entrega: ${new Date(cuando).toLocaleString('es-MX')}${dentroHorario ? '' : ' (fuera de horario, pre-orden)'}`); }
-      if (notas) lines.push(`Notas: ${notas}`);
-      lines.push('');
-      lines.push(`Pago: ${pago === 'efectivo' ? 'Efectivo a la entrega' : pago === 'transferencia' ? 'Transferencia (completo)' : pago === 'apartado' ? 'Apartado 50%' : 'Pago en línea'}`);
-      if (pago === 'online') {
-        lines.push(`Link pago total: ${PAYMENT_URL_FULL}`);
-        lines.push(`Link 50%: ${PAYMENT_URL_DEPOSIT}`);
-      }
-      lines.push('Confirmo disponibilidad y hora de entrega.');
-
-      const text = encodeURIComponent(lines.join('\n')); // ← IMPORTANTE: salto de línea correcto
-      const url = `https://wa.me/${SELLER_WA}?text=${text}`;
-      window.open(url, '_blank');
-    });
-
-    // Init
-    document.getElementById('year').textContent = new Date().getFullYear();
-    renderMenu();
-  </script>
-</body>
+<script>
+const SELLER_WA = '525636364089';
+const menuItems = [
+{ nombre: 'Alitas (7 pz)', precio: 75, desc: 'Lechuga, zanahoria, pepino, aderezo' },
+{ nombre: 'Alitas (12 pz)', precio: 110, desc: 'Lechuga, zanahoria, pepino, aderezo' },
+{ nombre: 'Alitas (24 pz)', precio: 205, desc: 'Lechuga, zanahoria, pepino, aderezo' },
+{ nombre: 'Capy Gusto', precio: 115, desc: 'Alitas (7 pz) + Papas fritas' },
+{ nombre: 'Capy Caja Loca', precio: 150, desc: 'Alitas (12 pz) + Papas fritas' },
+{ nombre: 'Capy Fiesta', precio: 245, desc: 'Alitas (24 pz) + Papas fritas' },
+{ nombre: 'Capy Mordida Max', precio: 105, desc: 'Hamburguesa clásica + Papas fritas' },
 </html>
-
