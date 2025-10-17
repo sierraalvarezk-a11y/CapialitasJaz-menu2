@@ -1,125 +1,157 @@
-<script>
-// ===== CONFIG =====
-const SELLER_WA = '525636364089';
-const money = n => `$${Number(n).toFixed(2)}`;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Capialitas Jaz — Menú</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#fff5ef 0%,#ffe9df 100%);color:#2c2c2c;margin:0}
+    .wrap{max-width:980px;margin:0 auto;padding:20px}
+    header{padding:28px 0 8px;text-align:center}
+    header h1{margin:0;color:#e43b3b;font-weight:900;letter-spacing:.5px;font-size:40px}
+    header p{margin:6px 0 0;color:#c16969;font-weight:600}
+    .menu-card{background:#fff;border:1px solid #f2d0d0;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);margin:14px 0}
+    .menu-card__wrap{padding:16px 18px}
+    .menu-title{color:#e43b3b;font-weight:800;font-size:20px;margin:0 0 6px}
+    .menu-list{display:flex;flex-direction:column}
+    .menu-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid #ffe0e0}
+    .menu-row:first-child{border-top:0}
+    .menu-info{flex:1}
+    .item-name{font-weight:800}
+    .item-desc{font-size:13px;color:#6b7280}
+    .item-price{width:70px;text-align:right;font-weight:800}
+    .add-btn{background:#e43b3b;color:#fff;border:0;border-radius:12px;padding:8px 14px;font-weight:700;cursor:pointer}
+    .add-btn:active{transform:scale(.98);background:#c92828}
+    /* Carrito */
+    #cart{background:#fff;border:1px solid #f2d0d0;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);margin:18px 0;padding:16px 18px}
+    #cart h2{margin:0 0 8px;color:#e43b3b}
+    #cartList{list-style:none;margin:8px 0 0;padding:0}
+    .cart-item{display:flex;justify-content:space-between;margin:6px 0}
+    .cta{display:block;width:100%;background:#e43b3b;color:#fff;border:0;border-radius:18px;padding:14px 18px;font-weight:800;margin-top:12px;cursor:pointer}
+    .cta:active{transform:scale(.99);background:#c92828}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>CAPIALITAS JAZ</h1>
+      <p>Alitas con sabor y ternura</p>
+    </header>
 
-// ===== DATA (menú de la captura) =====
-const menuItems = [
-  // Alitas
-  { cat:'Alitas', nombre:'Alitas (7 pz)', precio:75,  desc:'Lechuga, zanahoria, pepino, aderezo' },
-  { cat:'Alitas', nombre:'Alitas (12 pz)', precio:110, desc:'Lechuga, zanahoria, pepino, aderezo' },
-  { cat:'Alitas', nombre:'Alitas (24 pz)', precio:205, desc:'Lechuga, zanahoria, pepino, aderezo' },
-  // Combos
-  { cat:'Combos', nombre:'Capy Gusto',      precio:115, desc:'Alitas (7 pz) + Papas fritas' },
-  { cat:'Combos', nombre:'Capy Caja Loca',  precio:150, desc:'Alitas (12 pz) + Papas fritas' },
-  { cat:'Combos', nombre:'Capy Fiesta',     precio:245, desc:'Alitas (24 pz) + Papas fritas' },
-  { cat:'Combos', nombre:'Capy Mordida Max',precio:105, desc:'Hamburguesa clásica + Papas fritas' },
-  { cat:'Combos', nombre:'Combo Chill',     precio:130, desc:'Hamburguesa doble carne + Papas fritas' },
-  { cat:'Combos', nombre:'Capialitas… ¡Unidos!', precio:335, desc:'5 Mini Hamburguesas + 5 Mini Banderillas + Papas + Hamburguesa clásica + Alitas (300g)' },
-];
+    <!-- AQUÍ se renderiza el menú -->
+    <div id="menu"></div>
 
-// ===== ESTADO =====
-let cart = [];
+    <!-- Carrito -->
+    <section id="cart">
+      <h2>Tu pedido</h2>
+      <div> Total: <span id="cartTotal">$0.00</span></div>
+      <ul id="cartList"></ul>
+      <button class="cta" onclick="checkout()">Enviar por WhatsApp</button>
+    </section>
+  </div>
 
-// ===== RENDER MENÚ =====
-function renderMenu(){
-  const container = document.getElementById('menu');
-  container.innerHTML = '';
+  <!-- Tu script (exacto como me lo pasaste) -->
+  <script>
+  // ===== CONFIG =====
+  const SELLER_WA = '525636364089';
+  const money = n => `$${Number(n).toFixed(2)}`;
 
-  const cats = ['Alitas','Combos'];
-  cats.forEach(cat=>{
-    // Card de categoría
-    const card = document.createElement('div');
-    card.className = 'menu-card';
-    card.innerHTML = `
-      <div class="menu-card__wrap">
-        <h2 class="menu-title">${cat}</h2>
-        <div class="menu-list"></div>
-      </div>`;
-    container.appendChild(card);
+  // ===== DATA (menú de la captura) =====
+  const menuItems = [
+    // Alitas
+    { cat:'Alitas', nombre:'Alitas (7 pz)',  precio:75,  desc:'Lechuga, zanahoria, pepino, aderezo' },
+    { cat:'Alitas', nombre:'Alitas (12 pz)', precio:110, desc:'Lechuga, zanahoria, pepino, aderezo' },
+    { cat:'Alitas', nombre:'Alitas (24 pz)', precio:205, desc:'Lechuga, zanahoria, pepino, aderezo' },
+    // Combos
+    { cat:'Combos', nombre:'Capy Gusto',          precio:115, desc:'Alitas (7 pz) + Papas fritas' },
+    { cat:'Combos', nombre:'Capy Caja Loca',      precio:150, desc:'Alitas (12 pz) + Papas fritas' },
+    { cat:'Combos', nombre:'Capy Fiesta',         precio:245, desc:'Alitas (24 pz) + Papas fritas' },
+    { cat:'Combos', nombre:'Capy Mordida Max',    precio:105, desc:'Hamburguesa clásica + Papas fritas' },
+    { cat:'Combos', nombre:'Combo Chill',         precio:130, desc:'Hamburguesa doble carne + Papas fritas' },
+    { cat:'Combos', nombre:'Capialitas… ¡Unidos!', precio:335, desc:'5 Mini Hamburguesas + 5 Mini Banderillas + Papas + Hamburguesa clásica + Alitas (300g)' },
+  ];
 
-    const list = card.querySelector('.menu-list');
-    menuItems.filter(i=>i.cat===cat).forEach((item, idx)=>{
-      const row = document.createElement('div');
-      row.className = 'menu-row';
-      row.innerHTML = `
-        <div class="menu-info">
-          <div class="item-name">${item.nombre}</div>
-          <div class="item-desc">${item.desc||''}</div>
-        </div>
-        <div class="item-price">${money(item.precio)}</div>
-        <button class="add-btn" data-idx="${menuItems.indexOf(item)}">Agregar</button>
-      `;
-      list.appendChild(row);
+  // ===== ESTADO =====
+  let cart = [];
+
+  // ===== RENDER MENÚ =====
+  function renderMenu(){
+    const container = document.getElementById('menu');
+    container.innerHTML = '';
+
+    const cats = ['Alitas','Combos'];
+    cats.forEach(cat=>{
+      const card = document.createElement('div');
+      card.className = 'menu-card';
+      card.innerHTML = `
+        <div class="menu-card__wrap">
+          <h2 class="menu-title">${cat}</h2>
+          <div class="menu-list"></div>
+        </div>`;
+      container.appendChild(card);
+
+      const list = card.querySelector('.menu-list');
+      menuItems.filter(i=>i.cat===cat).forEach((item)=>{
+        const row = document.createElement('div');
+        row.className = 'menu-row';
+        row.innerHTML = `
+          <div class="menu-info">
+            <div class="item-name">${item.nombre}</div>
+            <div class="item-desc">${item.desc||''}</div>
+          </div>
+          <div class="item-price">${money(item.precio)}</div>
+          <button class="add-btn" data-name="${item.nombre}">Agregar</button>
+        `;
+        list.appendChild(row);
+      });
     });
-  });
 
-  // botones Agregar
-  document.querySelectorAll('.add-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const i = parseInt(btn.dataset.idx,10);
-      addToCart(menuItems[i]);
+    // Botones Agregar
+    document.querySelectorAll('.add-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const item = menuItems.find(m => m.nombre === btn.dataset.name);
+        addToCart(item);
+      });
     });
-  });
-}
+  }
 
-// ===== CARRITO =====
-function addToCart(item){
-  // permite repetir el mismo producto varias veces
-  cart.push({ nombre:item.nombre, precio:item.precio, qty:1 });
+  // ===== CARRITO =====
+  function addToCart(item){
+    // Puedes permitir repetidos o consolidar; aquí permitimos repetidos
+    cart.push({ nombre:item.nombre, precio:item.precio, qty:1 });
+    renderCart();
+  }
+
+  function renderCart(){
+    const ul = document.getElementById('cartList');
+    const totalEl = document.getElementById('cartTotal');
+    ul.innerHTML = '';
+    let total = 0;
+
+    cart.forEach((it)=>{
+      total += it.precio * it.qty;
+      const li = document.createElement('li');
+      li.className = 'cart-item';
+      li.innerHTML = `${it.qty}× ${it.nombre} <span>${money(it.precio * it.qty)}</span>`;
+      ul.appendChild(li);
+    });
+
+    totalEl.textContent = money(total);
+  }
+
+  // ===== CHECKOUT (WhatsApp) =====
+  function checkout(){
+    if(cart.length===0){ alert('Tu carrito está vacío'); return; }
+    const lines = cart.map(i=>`${i.qty}× ${i.nombre} - ${money(i.precio*i.qty)}`);
+    const total = cart.reduce((s,i)=>s+i.precio*i.qty,0);
+    lines.push(`Total: ${money(total)}`);
+    const text = encodeURIComponent(lines.join('\n'));
+    window.open(`https://wa.me/${SELLER_WA}?text=${text}`, '_blank');
+  }
+
+  // ===== INICIO =====
+  renderMenu();
   renderCart();
-}
-
-function renderCart(){
-  const ul = document.getElementById('cartList');
-  const totalEl = document.getElementById('cartTotal');
-  ul.innerHTML = '';
-  let total = 0;
-
-  cart.forEach((it, i)=>{
-    total += it.precio * it.qty;
-    const li = document.createElement('li');
-    li.className = 'cart-item';
-    li.innerHTML = `
-      ${it.qty}× ${it.nombre}
-      <span>${money(it.precio * it.qty)}</span>
-    `;
-    ul.appendChild(li);
-  });
-
-  totalEl.textContent = money(total);
-}
-
-// ===== CHECKOUT (WhatsApp) =====
-function checkout(){
-  if(cart.length===0){ alert('Tu carrito está vacío'); return; }
-  const lines = cart.map(i=>`${i.qty}× ${i.nombre} - ${money(i.precio*i.qty)}`);
-  const total = cart.reduce((s,i)=>s+i.precio*i.qty,0);
-  lines.push(`Total: ${money(total)}`);
-  const text = encodeURIComponent(lines.join('\\n'));
-  window.open(`https://wa.me/${SELLER_WA}?text=${text}`, '_blank');
-}
-
-// ===== ESTILOS RÁPIDOS (clases usadas arriba) =====
-const style = document.createElement('style');
-style.textContent = `
-  .menu-card { background:#fff; border:1px solid #f2d0d0; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.06); margin:14px 0; }
-  .menu-card__wrap { padding:16px 18px; }
-  .menu-title { color:#e43b3b; font-weight:800; font-size:20px; margin-bottom:6px; }
-  .menu-list { display:flex; flex-direction:column; }
-  .menu-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid #ffe0e0; }
-  .menu-row:first-child { border-top:0; }
-  .menu-info { flex:1; }
-  .item-name { font-weight:700; }
-  .item-desc { font-size:13px; color:#6b7280; }
-  .item-price { width:70px; text-align:right; font-weight:700; }
-  .add-btn { background:#e43b3b; color:#fff; border:0; border-radius:12px; padding:8px 14px; font-weight:700; cursor:pointer; }
-  .add-btn:active { transform:scale(.98); background:#c92828; }
-`;
-document.head.appendChild(style);
-
-// ===== INICIO =====
-renderMenu();
-renderCart();
-</script>
-
+  </script>
+</body>
+</html>
