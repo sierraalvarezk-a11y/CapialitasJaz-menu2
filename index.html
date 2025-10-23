@@ -1,157 +1,393 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Capialitas Jaz — Menú</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#fff5ef 0%,#ffe9df 100%);color:#2c2c2c;margin:0}
-    .wrap{max-width:980px;margin:0 auto;padding:20px}
-    header{padding:28px 0 8px;text-align:center}
-    header h1{margin:0;color:#e43b3b;font-weight:900;letter-spacing:.5px;font-size:40px}
-    header p{margin:6px 0 0;color:#c16969;font-weight:600}
-    .menu-card{background:#fff;border:1px solid #f2d0d0;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);margin:14px 0}
-    .menu-card__wrap{padding:16px 18px}
-    .menu-title{color:#e43b3b;font-weight:800;font-size:20px;margin:0 0 6px}
-    .menu-list{display:flex;flex-direction:column}
-    .menu-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid #ffe0e0}
-    .menu-row:first-child{border-top:0}
-    .menu-info{flex:1}
-    .item-name{font-weight:800}
-    .item-desc{font-size:13px;color:#6b7280}
-    .item-price{width:70px;text-align:right;font-weight:800}
-    .add-btn{background:#e43b3b;color:#fff;border:0;border-radius:12px;padding:8px 14px;font-weight:700;cursor:pointer}
-    .add-btn:active{transform:scale(.98);background:#c92828}
-    /* Carrito */
-    #cart{background:#fff;border:1px solid #f2d0d0;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);margin:18px 0;padding:16px 18px}
-    #cart h2{margin:0 0 8px;color:#e43b3b}
-    #cartList{list-style:none;margin:8px 0 0;padding:0}
-    .cart-item{display:flex;justify-content:space-between;margin:6px 0}
-    .cta{display:block;width:100%;background:#e43b3b;color:#fff;border:0;border-radius:18px;padding:14px 18px;font-weight:800;margin-top:12px;cursor:pointer}
-    .cta:active{transform:scale(.99);background:#c92828}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Capialitas Jaz — Menú</title>
+<meta name="theme-color" content="#ffefe2"/>
+
+<style>
+  :root{
+    --cream:#FFF4EA;
+    --cream2:#FFE8D6;
+    --ink:#2b2b2b;
+    --red:#E43B3B;
+    --red-dark:#C92A2A;
+    --amber:#FDBA11;
+    --orange:#FF7A1A;
+    --card:#ffffff;
+    --line:#f3d6d6;
+  }
+  html,body{margin:0}
+  body{
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background: radial-gradient(1200px 600px at 30% -10%, var(--cream) 10%, transparent 60%) no-repeat,
+                linear-gradient(180deg,var(--cream) 0%, var(--cream2) 100%);
+    color:var(--ink);
+  }
+  .container{max-width:1100px;margin:0 auto;padding:22px 16px 120px}
+  header{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+  header img{width:96px;height:96px;object-fit:cover;border-radius:18px;box-shadow:0 10px 30px rgba(228,59,59,.18)}
+  .brand h1{margin:0;color:var(--red);letter-spacing:.5px;font-weight:900;font-size:34px;line-height:1}
+  .brand p{margin:6px 0 0;color:#b25b5b;font-weight:600}
+
+  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+  @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
+  .card-body{padding:16px}
+
+  .section-title{color:var(--red);font-weight:900;margin:0 0 8px}
+  .item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border-top:1px solid #ffe0e0;padding:12px 0}
+  .item:first-child{border-top:0}
+  .item-name{font-weight:800}
+  .item-desc{font-size:13px;color:#6b7280}
+  .price{font-weight:900;min-width:72px;text-align:right}
+
+  .options{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #f0caca;border-radius:12px;padding:6px 10px;font-size:13px;background:#fff}
+  .chip input{accent-color:var(--red)}
+  .qty{width:72px}
+
+  .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+  .btn-add{background:var(--red);color:#fff}
+  .btn-add:active{transform:scale(.98);background:var(--red-dark)}
+  .btn-ghost{background:#f7f7f7}
+
+  /* Carrito */
+  #cartList{list-style:none;margin:0;padding:0}
+  .cart-row{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid #f5e0e0}
+  .cart-row:first-child{border-top:0}
+  .icon-btn{width:30px;height:30px;border-radius:999px;border:0;background:#f3f3f3;cursor:pointer}
+  .icon-btn:active{transform:scale(.97)}
+  .total-line{display:flex;justify-content:space-between;margin-top:10px;font-weight:900}
+  .cta{display:block;width:100%;background:var(--red);color:#fff;border:0;border-radius:18px;padding:14px 18px;font-weight:900;margin-top:12px;cursor:pointer}
+  .cta:active{transform:scale(.99);background:var(--red-dark)}
+
+  /* Formulario */
+  .form input,.form select,.form textarea{
+    width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:6px 0;outline:none;
+  }
+  fieldset{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
+  legend{font-size:12px;color:#7f1d1d;padding:0 6px}
+  small.note{color:#b25b5b}
+
+  .muted{color:#6b7280}
+</style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
     <header>
-      <h1>CAPIALITAS JAZ</h1>
-      <p>Alitas con sabor y ternura</p>
+      <img src="logo.jpg" alt="Capialitas Jaz" onerror="this.style.display='none'">
+      <div class="brand">
+        <h1>Capialitas Jaz</h1>
+        <p>Alitas con sabor y ternura</p>
+      </div>
     </header>
 
-    <!-- AQUÍ se renderiza el menú -->
-    <div id="menu"></div>
+    <div class="grid">
+      <!-- MENÚ -->
+      <section class="card">
+        <div class="card-body">
+          <h2 class="section-title">Menú</h2>
+          <div id="menu"></div>
 
-    <!-- Carrito -->
-    <section id="cart">
-      <h2>Tu pedido</h2>
-      <div> Total: <span id="cartTotal">$0.00</span></div>
-      <ul id="cartList"></ul>
-      <button class="cta" onclick="checkout()">Enviar por WhatsApp</button>
-    </section>
+          <h3 class="section-title" style="margin-top:16px">Condimentos extra <span class="muted">( $10 c/u )</span></h3>
+          <div id="extras" class="options"></div>
+        </div>
+      </section>
+
+      <!-- CARRITO + FORM -->
+      <aside class="card">
+        <div class="card-body">
+          <h2 class="section-title">Tu pedido</h2>
+          <ul id="cartList"></ul>
+          <div class="total-line"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+          <hr style="border:none;border-top:1px dashed #f1d3d3;margin:10px 0">
+          <form id="orderForm" class="form">
+            <h3 class="section-title">Datos de entrega</h3>
+            <input name="nombre" placeholder="Nombre de quien recibe" required>
+            <textarea name="direccion" rows="2" placeholder="Dirección de entrega (calle, número, colonia)" required></textarea>
+            <input type="datetime-local" name="cuando" placeholder="Horario de entrega">
+            <small class="note">🕒 *Servicio sobre pedido*</small>
+
+            <fieldset>
+              <legend>Método de pago</legend>
+              <label><input type="radio" name="pago" value="transferencia" checked> Transferencia</label><br>
+              <label><input type="radio" name="pago" value="mitad"> Mitad transferencia / Mitad efectivo</label>
+            </fieldset>
+
+            <textarea name="notas" rows="2" placeholder="Notas (p. ej. sin picante, llegar tocando claxon)"></textarea>
+            <button class="cta" type="submit">Enviar pedido por WhatsApp</button>
+          </form>
+        </div>
+      </aside>
+    </div>
   </div>
 
-  <!-- Tu script (exacto como me lo pasaste) -->
-  <script>
-  // ===== CONFIG =====
-  const SELLER_WA = '525636364089';
-  const money = n => `$${Number(n).toFixed(2)}`;
+<script>
+/* ===========================
+   CONFIG
+=========================== */
+const SELLER_WA = "525636364089";   // +52 563 636 4089
+const PRICE_EXTRA = 10;
 
-  // ===== DATA (menú de la captura) =====
-  const menuItems = [
-    // Alitas
-    { cat:'Alitas', nombre:'Alitas (7 pz)',  precio:75,  desc:'Lechuga, zanahoria, pepino, aderezo' },
-    { cat:'Alitas', nombre:'Alitas (12 pz)', precio:110, desc:'Lechuga, zanahoria, pepino, aderezo' },
-    { cat:'Alitas', nombre:'Alitas (24 pz)', precio:205, desc:'Lechuga, zanahoria, pepino, aderezo' },
-    // Combos
-    { cat:'Combos', nombre:'Capy Gusto',          precio:115, desc:'Alitas (7 pz) + Papas fritas' },
-    { cat:'Combos', nombre:'Capy Caja Loca',      precio:150, desc:'Alitas (12 pz) + Papas fritas' },
-    { cat:'Combos', nombre:'Capy Fiesta',         precio:245, desc:'Alitas (24 pz) + Papas fritas' },
-    { cat:'Combos', nombre:'Capy Mordida Max',    precio:105, desc:'Hamburguesa clásica + Papas fritas' },
-    { cat:'Combos', nombre:'Combo Chill',         precio:130, desc:'Hamburguesa doble carne + Papas fritas' },
-    { cat:'Combos', nombre:'Capialitas… ¡Unidos!', precio:335, desc:'5 Mini Hamburguesas + 5 Mini Banderillas + Papas + Hamburguesa clásica + Alitas (300g)' },
-  ];
+/* ===========================
+   DATA (productos)
+=========================== */
+const CATS = [
+  {
+    titulo: "Hamburguesas",
+    items: [
+      {
+        nombre: "Hamburguesa sencilla",
+        precio: 65,
+        desc: "Incluye papelería de ingredientes a elección",
+        opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada","Queso Chihuahua"]
+      },
+      {
+        nombre: "Hamburguesa doble carne",
+        precio: 95, // ← ajusta si manejas otro precio
+        desc: "Elige tus salsas y vegetales",
+        opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada"]
+      }
+    ]
+  },
+  {
+    titulo: "Alitas",
+    items: [
+      {
+        nombre: "Alitas 7 pz",
+        precio: 75,
+        desc: "Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
+        opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"]
+      },
+      {
+        nombre: "Alitas 12 pz",
+        precio: 115,
+        desc: "Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
+        opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"]
+      },
+      {
+        nombre: "Alitas 24 pz",
+        precio: 210,
+        desc: "Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
+        opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"]
+      }
+    ]
+  },
+  {
+    titulo: "Producto de la semana",
+    items: [
+      {
+        nombre: "Hamburguesa Flamin'Hot + Papas",
+        precio: 115,
+        desc: "Picantita y crujiente",
+        opciones: ["Mayonesa con chipotle","Queso Chihuahua","Catsup","Lechuga","Mostaza","Cebolla caramelizada","Tocino","Salsa de queso","Cheetos Flaming Hot"]
+      },
+      {
+        nombre: "Doriburguer Crunch",
+        precio: 115,
+        desc: "Crujiente con Doritos Nacho",
+        opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Cebolla caramelizada","Queso Oaxaca","Guacamole","Aderezo Ranch","Doritos Nacho"]
+      }
+    ]
+  }
+];
 
-  // ===== ESTADO =====
-  let cart = [];
+const EXTRAS = [
+  "Salsa Mango Habanero",
+  "Salsa Tamarindo",
+  "Crema Parmesano",
+  "Salsa BBQ",
+  "Aderezo Ranch"
+];
 
-  // ===== RENDER MENÚ =====
-  function renderMenu(){
-    const container = document.getElementById('menu');
-    container.innerHTML = '';
+/* ===========================
+   STATE
+=========================== */
+let cart = [];
 
-    const cats = ['Alitas','Combos'];
-    cats.forEach(cat=>{
-      const card = document.createElement('div');
-      card.className = 'menu-card';
-      card.innerHTML = `
-        <div class="menu-card__wrap">
-          <h2 class="menu-title">${cat}</h2>
-          <div class="menu-list"></div>
-        </div>`;
-      container.appendChild(card);
+/* ===========================
+   RENDER MENÚ
+=========================== */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const money = n => `$${Number(n).toFixed(2)}`;
 
-      const list = card.querySelector('.menu-list');
-      menuItems.filter(i=>i.cat===cat).forEach((item)=>{
-        const row = document.createElement('div');
-        row.className = 'menu-row';
-        row.innerHTML = `
-          <div class="menu-info">
-            <div class="item-name">${item.nombre}</div>
-            <div class="item-desc">${item.desc||''}</div>
+function renderMenu(){
+  const wrap = document.getElementById('menu');
+  wrap.innerHTML = '';
+  CATS.forEach(cat=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-body">
+      <h3 class="section-title">${cat.titulo}</h3>
+      <div class="list"></div>
+    </div>`;
+    wrap.appendChild(card);
+    const list = card.querySelector('.list');
+
+    cat.items.forEach((p, idx)=>{
+      const idBase = `${cat.titulo}-${idx}`.replace(/\\s+/g,'-').toLowerCase();
+      const row = document.createElement('div');
+      row.className='item';
+      row.innerHTML = `
+        <div>
+          <div class="item-name">${p.nombre}</div>
+          <div class="item-desc">${p.desc||''}</div>
+          <div class="options" id="${idBase}-opts">
+            ${ (p.opciones||[]).map((op,i)=>
+              `<label class="chip">
+                 <input type="checkbox" data-kind="opt" data-id="${idBase}" value="${op}">
+                 ${op}
+               </label>`).join('') }
+            ${ p.sabores ? `<label class="chip">
+                 <span>Sabor:</span>
+                 <select data-kind="flavor" data-id="${idBase}">
+                   ${p.sabores.map(s=>`<option>${s}</option>`).join('')}
+                 </select>
+               </label>` : '' }
           </div>
-          <div class="item-price">${money(item.precio)}</div>
-          <button class="add-btn" data-name="${item.nombre}">Agregar</button>
-        `;
-        list.appendChild(row);
+        </div>
+        <div class="price">${money(p.precio)}</div>
+        <div>
+          <input type="number" min="1" value="1" class="qty" id="${idBase}-qty">
+          <button class="btn btn-add" data-add="${idBase}">Agregar</button>
+        </div>
+      `;
+      list.appendChild(row);
+
+      // click agregar
+      row.querySelector(`[data-add="${idBase}"]`).addEventListener('click', ()=>{
+        const qty = Math.max(1, parseInt($(`#${idBase}-qty`).value||'1',10));
+        const opts = [...document.querySelectorAll(`input[data-id="${idBase}"][data-kind="opt"]:checked`)].map(x=>x.value);
+        const flavSel = document.querySelector(`select[data-id="${idBase}"][data-kind="flavor"]`);
+        const flavor = flavSel ? flavSel.value : null;
+
+        cart.push({
+          nombre: p.nombre,
+          precio: p.precio,
+          qty,
+          config: { opciones: opts, sabor: flavor }
+        });
+        renderCart();
+        // limpiar checks
+        document.querySelectorAll(`input[data-id="${idBase}"][data-kind="opt"]`).forEach(c=> c.checked=false);
+        if(flavSel) flavSel.selectedIndex = 0;
+        $(`#${idBase}-qty`).value = 1;
       });
     });
+  });
 
-    // Botones Agregar
-    document.querySelectorAll('.add-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const item = menuItems.find(m => m.nombre === btn.dataset.name);
-        addToCart(item);
-      });
+  // EXTRAS
+  const exWrap = document.getElementById('extras');
+  exWrap.innerHTML = EXTRAS.map((ex,i)=>`
+    <label class="chip">
+      <input type="checkbox" class="ex" data-ex="${i}"> ${ex}
+      <input type="number" min="1" value="1" class="qty" style="width:58px" data-ex-qty="${i}">
+      <span class="muted">@ $${PRICE_EXTRA}</span>
+    </label>
+  `).join('');
+  // al marcar, agrega al carrito
+  $$('.ex').forEach(chk=>{
+    chk.addEventListener('change', ()=>{
+      const i = chk.dataset.ex;
+      if(chk.checked){
+        const q = Math.max(1, parseInt($(`[data-ex-qty="${i}"]`).value||'1',10));
+        cart.push({ nombre:`Extra: ${EXTRAS[i]}`, precio: PRICE_EXTRA, qty: q, config:{} });
+        renderCart();
+      }
     });
-  }
+  });
+}
 
-  // ===== CARRITO =====
-  function addToCart(item){
-    // Puedes permitir repetidos o consolidar; aquí permitimos repetidos
-    cart.push({ nombre:item.nombre, precio:item.precio, qty:1 });
-    renderCart();
-  }
+/* ===========================
+   CARRITO
+=========================== */
+function renderCart(){
+  const list = document.getElementById('cartList');
+  list.innerHTML = '';
+  let subtotal = 0;
 
-  function renderCart(){
-    const ul = document.getElementById('cartList');
-    const totalEl = document.getElementById('cartTotal');
-    ul.innerHTML = '';
-    let total = 0;
+  cart.forEach((it, idx)=>{
+    subtotal += it.precio * it.qty;
+    const li = document.createElement('li');
+    li.className='cart-row';
+    li.innerHTML = `
+      <div>
+        <b>${it.qty}× ${it.nombre}</b>
+        ${ formatCfg(it.config) ? `<div class="muted" style="font-size:12px">${formatCfg(it.config)}</div>` : '' }
+      </div>
+      <div class="muted">${money(it.precio)}</div>
+      <div><button class="icon-btn" data-dec="${idx}">−</button> <button class="icon-btn" data-inc="${idx}">+</button></div>
+      <div><button class="icon-btn" data-del="${idx}">✕</button></div>
+    `;
+    list.appendChild(li);
+  });
 
-    cart.forEach((it)=>{
-      total += it.precio * it.qty;
-      const li = document.createElement('li');
-      li.className = 'cart-item';
-      li.innerHTML = `${it.qty}× ${it.nombre} <span>${money(it.precio * it.qty)}</span>`;
-      ul.appendChild(li);
-    });
+  document.getElementById('subtotal').textContent = money(subtotal);
 
-    totalEl.textContent = money(total);
-  }
+  // acciones
+  list.querySelectorAll('[data-dec]').forEach(b=> b.addEventListener('click', ()=>{ const i=+b.dataset.dec; cart[i].qty=Math.max(1,cart[i].qty-1); renderCart(); }));
+  list.querySelectorAll('[data-inc]').forEach(b=> b.addEventListener('click', ()=>{ const i=+b.dataset.inc; cart[i].qty++; renderCart(); }));
+  list.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=>{ const i=+b.dataset.del; cart.splice(i,1); renderCart(); }));
+}
 
-  // ===== CHECKOUT (WhatsApp) =====
-  function checkout(){
-    if(cart.length===0){ alert('Tu carrito está vacío'); return; }
-    const lines = cart.map(i=>`${i.qty}× ${i.nombre} - ${money(i.precio*i.qty)}`);
-    const total = cart.reduce((s,i)=>s+i.precio*i.qty,0);
-    lines.push(`Total: ${money(total)}`);
-    const text = encodeURIComponent(lines.join('\n'));
-    window.open(`https://wa.me/${SELLER_WA}?text=${text}`, '_blank');
-  }
+function formatCfg(cfg){
+  if(!cfg) return '';
+  const parts=[];
+  if(cfg.sabor) parts.push(`Sabor: ${cfg.sabor}`);
+  if(cfg.opciones && cfg.opciones.length) parts.push(cfg.opciones.join(', '));
+  return parts.join(' · ');
+}
 
-  // ===== INICIO =====
-  renderMenu();
-  renderCart();
-  </script>
+/* ===========================
+   SUBMIT → WhatsApp
+=========================== */
+document.getElementById('orderForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  if(cart.length===0){ alert('Tu carrito está vacío'); return; }
+
+  const fd = new FormData(e.target);
+  const nombre = fd.get('nombre');
+  const direccion = fd.get('direccion');
+  const cuando = fd.get('cuando');
+  const pago = fd.get('pago');
+  const notas = fd.get('notas');
+
+  const lines = [];
+  lines.push('Nuevo pedido — Capialitas Jaz');
+  lines.push('');
+  cart.forEach((it,i)=>{
+    lines.push(`${i+1}. ${it.qty}× ${it.nombre} — $${(it.precio*it.qty).toFixed(2)}`);
+    const cfg = formatCfg(it.config); if(cfg) lines.push('   · ' + cfg);
+  });
+  const total = cart.reduce((s,i)=> s + i.precio*i.qty, 0);
+  lines.push('');
+  lines.push(`Subtotal: $${total.toFixed(2)}`);
+  lines.push('');
+  lines.push(`Cliente: ${nombre}`);
+  lines.push(`Dirección: ${direccion}`);
+  if(cuando) lines.push(`Horario de entrega: ${new Date(cuando).toLocaleString('es-MX')}`);
+  lines.push(`Pago: ${pago==='transferencia' ? 'Transferencia' : 'Mitad transferencia / mitad efectivo'}`);
+  if(notas) lines.push(`Notas: ${notas}`);
+  lines.push('');
+  lines.push('Pedido sobre pedido ✅');
+
+  const text = encodeURIComponent(lines.join('\\n'));
+  const url = `https://wa.me/${SELLER_WA}?text=${text}`;
+  window.open(url,'_blank');
+});
+
+/* ===========================
+   INIT
+=========================== */
+renderMenu();
+renderCart();
+</script>
 </body>
 </html>
