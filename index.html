@@ -348,40 +348,55 @@ function formatCfg(cfg){
 /* ===========================
    SUBMIT → WhatsApp
 =========================== */
+<script>
 document.getElementById('orderForm').addEventListener('submit', e=>{
   e.preventDefault();
   if(cart.length===0){ alert('Tu carrito está vacío'); return; }
 
   const fd = new FormData(e.target);
-  const nombre = fd.get('nombre');
-  const direccion = fd.get('direccion');
-  const cuando = fd.get('cuando');
-  const pago = fd.get('pago');
-  const notas = fd.get('notas');
+  const nombre   = fd.get('nombre');
+  const direccion= fd.get('direccion');
+  const cuando   = fd.get('cuando');
+  const pago     = fd.get('pago');
+  const notas    = fd.get('notas');
 
+  // Construimos líneas legibles (bullets, negritas)
+  const L = [];
+  L.push(`*Nuevo pedido — Capialitas Jaz*`);
+  L.push('');
+
+  cart.forEach((it,i)=>{
+    L.push(`• ${it.qty}× ${it.nombre} — $${(it.precio*it.qty).toFixed(2)}`);
+    const det = [];
+    if(it.config?.sabor) det.push(`Sabor: ${it.config.sabor}`);
+    if(it.config?.opciones?.length) det.push(it.config.opciones.join(', '));
+    if(det.length) L.push(`   _${det.join(' · ')}_`);
+  });
+
+  const subtotal = cart.reduce((s,i)=> s + i.precio*i.qty, 0);
+  L.push('');
+  L.push(`*Subtotal:* $${subtotal.toFixed(2)}`);
+  L.push('');
+  L.push(`*Cliente:* ${nombre}`);
+  L.push(`*Dirección:* ${direccion}`);
+  if(cuando) L.push(`*Horario de entrega:* ${new Date(cuando).toLocaleString('es-MX')}`);
+  L.push(`*Pago:* ${pago==='transferencia' ? 'Transferencia' : 'Mitad transferencia / mitad efectivo'}`);
+  if(notas) L.push(`*Notas:* ${notas}`);
+  L.push('');
+  L.push(`Pedido sobre pedido ✅`);
   const lines = [];
   lines.push('Nuevo pedido — Capialitas Jaz');
   lines.push('');
   cart.forEach((it,i)=>{
     lines.push(`${i+1}. ${it.qty}× ${it.nombre} — $${(it.precio*it.qty).toFixed(2)}`);
     const cfg = formatCfg(it.config); if(cfg) lines.push('   · ' + cfg);
-  });
-  const total = cart.reduce((s,i)=> s + i.precio*i.qty, 0);
-  lines.push('');
-  lines.push(`Subtotal: $${total.toFixed(2)}`);
-  lines.push('');
-  lines.push(`Cliente: ${nombre}`);
-  lines.push(`Dirección: ${direccion}`);
-  if(cuando) lines.push(`Horario de entrega: ${new Date(cuando).toLocaleString('es-MX')}`);
-  lines.push(`Pago: ${pago==='transferencia' ? 'Transferencia' : 'Mitad transferencia / mitad efectivo'}`);
-  if(notas) lines.push(`Notas: ${notas}`);
-  lines.push('');
-  lines.push('Pedido sobre pedido ✅');
+  
 
-  const text = encodeURIComponent(lines.join('\\n'));
-  const url = `https://wa.me/${SELLER_WA}?text=${text}`;
+ const text = encodeURIComponent(L.join('\n'));
+  const url  = `https://wa.me/525636364089?text=${text}`;
   window.open(url,'_blank');
 });
+</script>
 
 /* ===========================
    INIT
@@ -391,3 +406,4 @@ renderCart();
 </script>
 </body>
 </html>
+
