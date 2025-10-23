@@ -44,9 +44,12 @@
   /* Items */
   .item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border-top:1px solid #ffe0e0;padding:12px 0}
   .item:first-child{border-top:0}
+  .item--withimg{grid-template-columns:auto 1fr auto auto}
   .item-name{font-weight:800}
   .item-desc{font-size:13px;color:#6b7280}
   .price{font-weight:900;min-width:72px;text-align:right}
+  .thumb{width:72px;height:72px;object-fit:cover;border-radius:12px;margin-right:10px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+  .item-left{display:flex;align-items:flex-start}
 
   /* Chips / opciones */
   .options{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
@@ -137,7 +140,7 @@
             <input name="nombre" placeholder="Nombre de quien recibe" required>
             <textarea name="direccion" rows="2" placeholder="Dirección de entrega (calle, número, colonia)" required></textarea>
             <input type="datetime-local" name="cuando" placeholder="Horario de entrega">
-            <small class="muted">🕒 *Servicio sobre pedido*</small>
+            <small class="muted">🕒 Servicio sobre pedido · Vie–Sáb–Dom · 4:00–9:00 pm</small>
 
             <fieldset>
               <legend>Método de pago</legend>
@@ -182,7 +185,7 @@ const SELLER_WA = "525636364089";     // +52 563 636 4089
 const PRICE_EXTRA = 10;
 
 /* ===========================
-   DATA (productos)
+   DATA (productos) con imágenes
 =========================== */
 const CATS = [
   {
@@ -191,12 +194,14 @@ const CATS = [
       {
         nombre: "Hamburguesa sencilla",
         precio: 65,
+        img: "ham-sencilla.jpg",
         desc: "Elige tus ingredientes",
         opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada","Queso Chihuahua"]
       },
       {
         nombre: "Hamburguesa doble carne",
-        precio: 95,  // precio solicitado
+        precio: 95,  // solicitado
+        img: "ham-doble.jpg",
         desc: "Elige salsas y vegetales",
         opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada"]
       }
@@ -208,23 +213,29 @@ const CATS = [
       {
         nombre: "Alitas 7 pz",
         precio: 75,
+        img: "alitas-7.jpg",
         desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
         opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
-        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"]
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
+        halfAllowed: false
       },
       {
         nombre: "Alitas 12 pz",
         precio: 115,
+        img: "alitas-12.jpg",
         desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
         opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
-        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"]
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
+        halfAllowed: true
       },
       {
         nombre: "Alitas 24 pz",
         precio: 210,
+        img: "alitas-24.jpg",
         desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
         opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
-        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"]
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
+        halfAllowed: true
       }
     ]
   },
@@ -234,12 +245,14 @@ const CATS = [
       {
         nombre: "Hamburguesa Flamin'Hot + Papas",
         precio: 115,
+        img: "flaminhot.jpg",
         desc: "Picantita y crujiente",
         opciones: ["Mayonesa con chipotle","Queso Chihuahua","Catsup","Lechuga","Mostaza","Cebolla caramelizada","Tocino","Salsa de queso","Cheetos Flaming Hot"]
       },
       {
         nombre: "Doriburguer Crunch",
         precio: 115,
+        img: "doriburguer.jpg",
         desc: "Crujiente con Doritos Nacho",
         opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Cebolla caramelizada","Queso Oaxaca","Guacamole","Aderezo Ranch","Doritos Nacho"]
       }
@@ -263,8 +276,16 @@ const $  = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const money = n => `$${Number(n).toFixed(2)}`;
 
+/* Servicio: vie(5), sáb(6), dom(0) · 16–21 h */
+const SERVICE_DAYS = new Set([5,6,0]);
+function isServiceWindow(date){
+  if(!(date instanceof Date) || isNaN(date)) return false;
+  const d = date.getDay(), h = date.getHours();
+  return SERVICE_DAYS.has(d) && h >= 16 && h < 21;
+}
+
 /* ===========================
-   RENDER MENÚ
+   RENDER MENÚ (con imágenes y "mitad y mitad")
 =========================== */
 function renderMenu(){
   const wrap = document.getElementById('menu');
@@ -282,25 +303,55 @@ function renderMenu(){
     cat.items.forEach((p, idx)=>{
       const idBase = `${cat.titulo}-${idx}`.replace(/\s+/g,'-').toLowerCase();
       const row = document.createElement('div');
-      row.className='item';
+      row.className = p.img ? 'item item--withimg' : 'item';
       row.innerHTML = `
-        <div>
-          <div class="item-name">${p.nombre}</div>
-          <div class="item-desc">${p.desc||''}</div>
-          <div class="options" id="${idBase}-opts">
-            ${ (p.opciones||[]).map((op)=>
-              `<label class="chip">
-                 <input type="checkbox" data-kind="opt" data-id="${idBase}" value="${op}">
-                 ${op}
-               </label>`).join('') }
-            ${ p.sabores ? `<label class="chip">
-                 <span>Sabor:</span>
-                 <select data-kind="flavor" data-id="${idBase}">
-                   ${p.sabores.map(s=>`<option>${s}</option>`).join('')}
-                 </select>
-               </label>` : '' }
+        ${p.img ? `
+          <div class="item-left">
+            <img class="thumb" src="${p.img}" alt="${p.nombre}" onerror="this.style.display='none'">
+            <div>
+              <div class="item-name">${p.nombre}</div>
+              <div class="item-desc">${p.desc||''}</div>
+              <div class="options" id="${idBase}-opts">
+                ${ (p.opciones||[]).map((op)=>
+                  `<label class="chip">
+                    <input type="checkbox" data-kind="opt" data-id="${idBase}" value="${op}">
+                    ${op}
+                  </label>`).join('') }
+                ${ p.sabores ? `
+                    <label class="chip">
+                      <span>Sabor:</span>
+                      <select data-kind="flavorA" data-id="${idBase}">
+                        ${p.sabores.map(s=>`<option>${s}</option>`).join('')}
+                      </select>
+                    </label>
+                    ${ p.halfAllowed ? `
+                      <label class="chip">
+                        <input type="checkbox" data-kind="halfToggle" data-id="${idBase}"> Mitad y mitad
+                      </label>
+                      <label class="chip" id="${idBase}-halfBox" style="display:none;">
+                        <span>2° sabor:</span>
+                        <select data-kind="flavorB" data-id="${idBase}">
+                          ${p.sabores.map(s=>`<option>${s}</option>`).join('')}
+                        </select>
+                      </label>
+                    `: '' }
+                ` : '' }
+              </div>
+            </div>
           </div>
-        </div>
+        ` : `
+          <div>
+            <div class="item-name">${p.nombre}</div>
+            <div class="item-desc">${p.desc||''}</div>
+            <div class="options" id="${idBase}-opts">
+              ${ (p.opciones||[]).map((op)=>
+                `<label class="chip">
+                  <input type="checkbox" data-kind="opt" data-id="${idBase}" value="${op}">
+                  ${op}
+                </label>`).join('') }
+            </div>
+          </div>
+        `}
         <div class="price">${money(p.precio)}</div>
         <div>
           <input type="number" min="1" value="1" class="qty" id="${idBase}-qty">
@@ -309,24 +360,35 @@ function renderMenu(){
       `;
       list.appendChild(row);
 
+      // toggle mitad/mitad
+      const halfToggle = row.querySelector(`input[data-kind="halfToggle"][data-id="${idBase}"]`);
+      if(halfToggle){
+        halfToggle.addEventListener('change', ()=>{
+          const box = document.getElementById(`${idBase}-halfBox`);
+          box.style.display = halfToggle.checked ? 'inline-flex' : 'none';
+        });
+      }
+
       // Agregar al carrito
       row.querySelector(`[data-add="${idBase}"]`).addEventListener('click', ()=>{
         const qty = Math.max(1, parseInt($(`#${idBase}-qty`).value||'1',10));
         const opts = [...document.querySelectorAll(`input[data-id="${idBase}"][data-kind="opt"]:checked`)].map(x=>x.value);
-        const flavSel = document.querySelector(`select[data-id="${idBase}"][data-kind="flavor"]`);
-        const flavor = flavSel ? flavSel.value : null;
+        const flavorA = document.querySelector(`select[data-id="${idBase}"][data-kind="flavorA"]`);
+        const flavorB = document.querySelector(`select[data-id="${idBase}"][data-kind="flavorB"]`);
+        const halfOn  = document.querySelector(`input[data-id="${idBase}"][data-kind="halfToggle"]`);
 
-        cart.push({
-          nombre: p.nombre,
-          precio: p.precio,
-          qty,
-          config: { opciones: opts, sabor: flavor }
-        });
+        const config = { opciones: opts };
+        if(flavorA) config.sabor = flavorA.value;
+        if(halfOn && halfOn.checked && flavorB) config.sabor2 = flavorB.value;
+
+        cart.push({ nombre: p.nombre, precio: p.precio, qty, config });
         renderCart();
 
         // Limpieza
         document.querySelectorAll(`input[data-id="${idBase}"][data-kind="opt"]`).forEach(c=> c.checked=false);
-        if(flavSel) flavSel.selectedIndex = 0;
+        if(flavorA) flavorA.selectedIndex = 0;
+        if(flavorB) flavorB.selectedIndex = 0;
+        if(halfToggle){ halfToggle.checked=false; document.getElementById(`${idBase}-halfBox`).style.display='none'; }
         $(`#${idBase}-qty`).value = 1;
       });
     });
@@ -341,7 +403,6 @@ function renderMenu(){
       <span class="muted">@ $${PRICE_EXTRA}</span>
     </label>
   `).join('');
-  // al marcar, agrega al carrito
   $$('.ex').forEach(chk=>{
     chk.addEventListener('change', ()=>{
       const i = chk.dataset.ex;
@@ -360,7 +421,11 @@ function renderMenu(){
 function formatCfg(cfg){
   if(!cfg) return '';
   const parts=[];
-  if(cfg.sabor) parts.push(`Sabor: ${cfg.sabor}`);
+  if(cfg.sabor && cfg.sabor2){
+    parts.push(`Sabores: ${cfg.sabor} / ${cfg.sabor2}`);
+  }else if(cfg.sabor){
+    parts.push(`Sabor: ${cfg.sabor}`);
+  }
   if(cfg.opciones && cfg.opciones.length) parts.push(cfg.opciones.join(', '));
   return parts.join(' · ');
 }
@@ -401,7 +466,6 @@ function renderCart(){
   document.getElementById('fabCount').textContent = count;
 
   const dList = document.getElementById('drawerCart');
-  dList.innerHTML = '';
   drawCartList(dList);
   document.getElementById('drawerTotal').textContent = money(total);
 }
@@ -424,7 +488,7 @@ document.getElementById('goToForm').addEventListener('click', ()=>{
 });
 
 /* ===========================
-   SUBMIT → WhatsApp (formato limpio)
+   SUBMIT → WhatsApp (formato limpio + validación horario)
 =========================== */
 document.getElementById('orderForm').addEventListener('submit', e=>{
   e.preventDefault();
@@ -437,6 +501,14 @@ document.getElementById('orderForm').addEventListener('submit', e=>{
   const pago     = fd.get('pago');
   const notas    = fd.get('notas');
 
+  // Validación de horario
+  const whenDate = cuando ? new Date(cuando) : null;
+  if(whenDate && !isServiceWindow(whenDate)){
+    const ok = confirm('⚠️ El horario seleccionado está fuera de servicio (viernes, sábado y domingo de 4:00–9:00 pm). ¿Deseas continuar como PRE-ORDEN?');
+    if(!ok) return;
+  }
+
+  // Construir mensaje
   const L = [];
   L.push(`*Nuevo pedido — Capialitas Jaz*`);
   L.push('');
@@ -444,7 +516,11 @@ document.getElementById('orderForm').addEventListener('submit', e=>{
   cart.forEach((it)=>{
     L.push(`• ${it.qty}× ${it.nombre} — $${(it.precio*it.qty).toFixed(2)}`);
     const det = [];
-    if(it.config?.sabor) det.push(`Sabor: ${it.config.sabor}`);
+    if(it.config?.sabor && it.config?.sabor2){
+      det.push(`Sabores: ${it.config.sabor} / ${it.config.sabor2}`);
+    }else if(it.config?.sabor){
+      det.push(`Sabor: ${it.config.sabor}`);
+    }
     if(it.config?.opciones?.length) det.push(it.config.opciones.join(', '));
     if(det.length) L.push(`   _${det.join(' · ')}_`);
   });
@@ -455,13 +531,13 @@ document.getElementById('orderForm').addEventListener('submit', e=>{
   L.push('');
   L.push(`*Cliente:* ${nombre}`);
   L.push(`*Dirección:* ${direccion}`);
-  if(cuando) L.push(`*Horario de entrega:* ${new Date(cuando).toLocaleString('es-MX')}`);
+  if(whenDate) L.push(`*Horario de entrega:* ${whenDate.toLocaleString('es-MX')}`);
   L.push(`*Pago:* ${pago==='transferencia' ? 'Transferencia' : 'Mitad transferencia / mitad efectivo'}`);
   if(notas) L.push(`*Notas:* ${notas}`);
   L.push('');
   L.push('Pedido sobre pedido ✅');
 
-  const text = encodeURIComponent(L.join('\n')); // ← salto de línea correcto
+  const text = encodeURIComponent(L.join('\n')); // salto de línea correcto
   const url  = `https://wa.me/${SELLER_WA}?text=${text}`;
   window.open(url,'_blank');
 });
