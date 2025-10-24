@@ -1,375 +1,559 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Capialitas Jaz — Menú</title>
+<meta name="theme-color" content="#fff4ea"/>
+
 <style>
   :root{
-    --bg:#fff6ee;
-    --card:#ffffff;
-    --brand:#e23c3c;     /* rojo botón */
-    --brand-2:#f49c24;   /* naranja */
+    --cream:#FFF4EA;
+    --cream2:#FFE8D6;
     --ink:#2b2b2b;
-    --muted:#6b7280;
-    --ring:#ffd2c6;
-    --chip:#ffe7d7;
+    --red:#E43B3B;
+    --red-dark:#C92A2A;
+    --amber:#FDBA11;
+    --orange:#FF7A1A;
+    --card:#ffffff;
+    --line:#f3d6d6;
   }
-  *{box-sizing:border-box}
+  html,body{margin:0}
   body{
-    margin:0;background:var(--bg);color:var(--ink);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background: radial-gradient(1200px 600px at 30% -10%, var(--cream) 10%, transparent 60%) no-repeat,
+                linear-gradient(180deg,var(--cream) 0%, var(--cream2) 100%);
+    color:var(--ink);
   }
-  /* Header tipo app */
-  .appbar{
-    position:sticky;top:0;z-index:10;
-    background:linear-gradient(180deg,#ffe9db,transparent);
-    border-bottom:1px solid #f8d3c7;
-    backdrop-filter:saturate(1.1) blur(2px);
-  }
-  .appbar__inner{
-    max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px;
-    padding:12px 16px;
-  }
-  .logo{
-    width:56px;height:56px;border-radius:14px;overflow:hidden;
-    box-shadow:0 6px 18px rgba(226,60,60,.15);
-    background:#fff;border:1px solid #ffdbc8;display:grid;place-items:center;
-  }
-  .logo img{width:100%;height:100%;object-fit:cover;display:block}
-  .brand{
-    display:flex;flex-direction:column;gap:2px;
-  }
-  .brand h1{
-    margin:0;font-size:28px;line-height:1;font-weight:800;color:var(--brand);
-    letter-spacing:.3px;
-  }
-  .brand small{color:#c27767;font-weight:600}
+  .container{max-width:1100px;margin:0 auto;padding:22px 16px 120px}
+
+  /* Header con logo */
+  .site-header{display:flex;gap:16px;align-items:center;margin:0 0 12px}
+  .site-header .logo{width:80px;height:80px;object-fit:cover;border-radius:18px;box-shadow:0 10px 30px rgba(228,59,59,.18)}
+  .brand h1{margin:0;color:var(--red);font-weight:900;letter-spacing:.5px;font-size:34px;line-height:1}
+  .brand p{margin:6px 0 0;color:#b25b5b;font-weight:600}
 
   /* Layout */
-  .wrap{max-width:1100px;margin:auto;padding:16px}
-  .grid{
-    display:grid;gap:18px;
-    grid-template-columns: 1.25fr .95fr;
-  }
-  @media (max-width: 940px){
-    .grid{grid-template-columns:1fr}
-  }
+  .grid-2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+  @media (max-width: 900px){ .grid-2{display:block} }
 
-  /* Cards */
-  .card{
-    background:var(--card);border:1px solid #f5d6cd;border-radius:16px;
-    box-shadow:0 10px 32px rgba(0,0,0,.06);
-  }
-  .card__hd{padding:14px 18px;border-bottom:1px solid #f5d6cd}
-  .card__hd h2{margin:0;color:var(--brand-2);font-size:22px}
-  .card__bd{padding:14px 18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
+  .card-body{padding:16px}
+  .section-title{color:var(--red);font-weight:900;margin:0 0 8px}
 
-  /* Menu */
-  .block + .block{margin-top:16px}
-  .title{font-weight:800;color:#e24a3f;margin:2px 0 10px}
-  .row{
-    display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;
-    padding:10px 0;border-top:1px solid #ffe0d9;
-  }
-  .row:first-child{border-top:0}
-  .price{font-weight:800}
-  .qty{width:78px}
-  .btn{
-    background:var(--brand);color:#fff;border:0;border-radius:12px;
-    padding:9px 14px;font-weight:800;cursor:pointer
-  }
-  .btn:active{transform:scale(.98)}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{
-    display:inline-flex;align-items:center;gap:8px;
-    padding:8px 10px;border-radius:12px;background:var(--chip);
-    border:1px solid #ffd9c9
-  }
-  .chip input{transform:translateY(1px)}
+  /* Items */
+  .item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border-top:1px solid #ffe0e0;padding:12px 0}
+  .item:first-child{border-top:0}
+  .item--withimg{grid-template-columns:auto 1fr auto auto}
+  .item-name{font-weight:800}
+  .item-desc{font-size:13px;color:#6b7280}
+  .price{font-weight:900;min-width:72px;text-align:right}
+  .thumb{width:72px;height:72px;object-fit:cover;border-radius:12px;margin-right:10px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+  .item-left{display:flex;align-items:flex-start}
 
-  /* Cart */
-  .cart-row{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-top:1px dashed #f1c9bf}
+  /* Chips / opciones */
+  .options{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #f0caca;border-radius:12px;padding:6px 10px;font-size:13px;background:#fff}
+  .chip input{accent-color:var(--red)}
+  .qty{width:72px}
+
+  /* Botones */
+  .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+  .btn-add{background:var(--red);color:#fff}
+  .btn-add:active{transform:scale(.98);background:var(--red-dark)}
+  .icon-btn{width:30px;height:30px;border-radius:999px;border:0;background:#f3f3f3;cursor:pointer}
+  .icon-btn:active{transform:scale(.97)}
+  .cta{display:block;width:100%;background:var(--red);color:#fff;border:0;border-radius:18px;padding:14px 18px;font-weight:900;margin-top:12px;cursor:pointer}
+  .cta:active{transform:scale(.99);background:var(--red-dark)}
+  .muted{color:#6b7280}
+
+  /* Carrito */
+  #cartList{list-style:none;margin:0;padding:0}
+  .cart-row{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid #f5e0e0}
   .cart-row:first-child{border-top:0}
-  .muted{color:var(--muted);font-size:13px}
-  .tot{display:flex;justify-content:space-between;font-weight:800;padding-top:10px}
-  .mini{display:flex;gap:6px;align-items:center}
-  .iconbtn{
-    width:28px;height:28px;border-radius:8px;border:1px solid #ffd4c8;background:#fff;cursor:pointer
-  }
-  .cta{margin-top:12px;width:100%}
+  .total-line{display:flex;justify-content:space-between;margin:10px 0 0;font-weight:900}
 
-  /* Form */
-  .f{display:flex;flex-direction:column;gap:10px}
-  .f input,.f select,.f textarea{
-    width:100%;padding:10px 12px;border:1px solid #f2cfca;border-radius:10px;outline:none
+  /* Formulario */
+  .form input,.form select,.form textarea{
+    width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:6px 0;outline:none;
   }
-  .help{font-size:12px;color:#b85c4f}
-  .warn{font-size:13px;color:#b10000;background:#ffe6e6;border:1px solid #ffcccc;padding:8px 10px;border-radius:8px}
+  fieldset{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
+  legend{font-size:12px;color:#7f1d1d;padding:0 6px}
+
+  /* FAB móvil */
+  .fab{
+    position:fixed; right:16px; bottom:16px; z-index:50;
+    background:var(--red); color:#fff; border:0; border-radius:999px;
+    padding:12px 16px; font-weight:900; box-shadow:0 10px 26px rgba(0,0,0,.18);
+    display:none;
+  }
+  @media (max-width: 900px){ .fab{ display:block; } }
+
+  /* Drawer móvil */
+  .drawer{ position:fixed; inset:0; z-index:60; display:none; }
+  .drawer[aria-hidden="false"]{ display:block; }
+  .drawer-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.4); }
+  .drawer-panel{
+    position:absolute; left:0; right:0; bottom:0;
+    background:#fff; border-top-left-radius:18px; border-top-right-radius:18px;
+    padding:14px; max-height:85vh; overflow:auto;
+    box-shadow:0 -10px 30px rgba(0,0,0,.18);
+  }
+  .drawer-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .drawer-close{ border:0; background:#f3f3f3; width:34px; height:34px; border-radius:999px; cursor:pointer; }
+  #drawerCart .cart-row{ border-top:1px solid #f5e0e0; padding-top:8px; margin-top:8px; }
+  .drawer-total{ display:flex; justify-content:space-between; font-weight:900; margin:12px 0; }
+  @media (min-width: 901px){ #drawer{ display:none !important; } }
 </style>
 </head>
 <body>
+  <div class="container">
+    <header class="site-header">
+      <!-- LOGO INCRUSTADO (data-URI) -->
+      <img
+        class="logo"
+        alt="Capialitas Jaz"
+        src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGBgYHBgcICAcKCwoLCg8ODAwODRYQERQVGBYcHB0gJCEiICIkJCQqKi4yMjIuOTk5OTlGSkZFRUVFRUVFRUVB/2wCEAQcHBw0NDhAQEhASEhISFBISEhISFBISEhISFBISEhISFBISEhISFBISEhISFBISEhISFBISEhISFBISEhISFBI/3QAEAA//2gAMAwEAAhEDEQA/AP35qtu2k3bQ6Z1gP0mCwQm3m8qgM3Lw3yq6KFM5m3Rr1bYpQ9QnQmJ7z2WJpQ4r2c6b8g8Qy0nq7B+qv7ZgQF1l1s2m0m/RGz9HfH0p2JgqK3q9k6x5GfJx5q+Xh1PXqZcVq7J7M3m0q4zY0m1mY3m3gO1bqN0Yw3Vbq0o4Jv1G2jWw3sg3mWfM3l7GDT6fW7yW3o3lB0m5q7U3oX9S7o0Q1Ww5r5wJQq1mJxZ9Q6l7zH8q2rGqJ7aJ2u8bV1k9m3z+1b6r2m8eR5R+o3qV+f8A6U9b0+/wD/2Q=="
+        onerror="this.style.display='none'">
+      <div class="brand">
+        <h1>Capialitas Jaz</h1>
+        <p>Alitas con sabor y ternura</p>
+      </div>
+    </header>
 
-<header class="appbar">
-  <div class="appbar__inner">
-    <div class="logo"><img id="logo" alt="Capialitas Jaz"></div>
-    <div class="brand">
-      <h1>Capialitas Jaz</h1>
-      <small>Alitas con sabor y ternura</small>
+    <div class="grid-2">
+      <!-- MENÚ -->
+      <section id="menuSection" class="card">
+        <div class="card-body">
+          <h2 class="section-title">Menú</h2>
+          <div id="menu"></div>
+
+          <h3 class="section-title" style="margin-top:16px">Condimentos extra <span class="muted">( $10 c/u )</span></h3>
+          <div id="extras" class="options"></div>
+        </div>
+      </section>
+
+      <!-- CARRITO + FORM -->
+      <aside id="orderSection" class="card">
+        <div class="card-body">
+          <h2 class="section-title">Tu pedido</h2>
+          <ul id="cartList"></ul>
+          <div class="total-line"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+          <hr style="border:none;border-top:1px dashed #f1d3d3;margin:10px 0">
+          <form id="orderForm" class="form">
+            <h3 class="section-title">Datos de entrega</h3>
+            <input name="nombre" placeholder="Nombre de quien recibe" required>
+            <textarea name="direccion" rows="2" placeholder="Dirección de entrega (calle, número, colonia)" required></textarea>
+            <input type="datetime-local" name="cuando" placeholder="Horario de entrega">
+            <small class="muted">🕒 Servicio sobre pedido · Vie–Sáb–Dom · 4:00–9:00 pm</small>
+
+            <fieldset>
+              <legend>Método de pago</legend>
+              <label><input type="radio" name="pago" value="transferencia" checked> Transferencia</label><br>
+              <label><input type="radio" name="pago" value="mitad"> Mitad transferencia / Mitad efectivo</label>
+            </fieldset>
+
+            <textarea name="notas" rows="2" placeholder="Notas (p. ej. sin picante, tocar claxon)"></textarea>
+            <button class="cta" type="submit">Enviar pedido por WhatsApp</button>
+          </form>
+        </div>
+      </aside>
     </div>
   </div>
-</header>
 
-<main class="wrap grid">
-  <!-- MENÚ -->
-  <section class="card" id="menuCard">
-    <div class="card__hd"><h2>Menú</h2></div>
-    <div class="card__bd" id="menu"></div>
-  </section>
+  <!-- Botón flotante (móvil) -->
+  <button id="fabCart" class="fab" type="button" aria-label="Abrir pedido">
+    🧺 <span id="fabCount">0</span> · <span id="fabTotal">$0.00</span>
+  </button>
 
-  <!-- CARRITO + FORM -->
-  <aside class="card">
-    <div class="card__hd"><h2>Tu pedido</h2></div>
-    <div class="card__bd">
-      <div id="cart"></div>
-      <div class="tot"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
-
-      <h3 class="title">Datos de entrega</h3>
-      <div class="f">
-        <input id="nombre" placeholder="Nombre de quien recibe">
-        <input id="direccion" placeholder="Dirección de entrega (calle, número, colonia)">
-        <select id="zona">
-          <option value="">Selecciona zona</option>
-          <option>Juárez</option><option>Cadete Molino</option><option>Plan de Ayala</option>
-          <option>San Antonio Zomeyucan</option><option>Bonfil</option><option>San Bartolo</option>
-          <option>Martires del Rio Blanco</option><option>Otra</option>
-        </select>
-        <div id="zonaWarn" class="warn" style="display:none">⚠ Posible fuera de zona</div>
-        <input id="cuando" type="datetime-local">
-        <div class="help">Horario de servicio: <b>Viernes, Sábado y Domingo, 4:00–9:00 p.m.</b></div>
-
-        <h4 class="title" style="margin-top:8px">Método de pago</h4>
-        <label class="chip"><input type="radio" name="pago" value="transferencia" checked> Transferencia</label>
-        <label class="chip"><input type="radio" name="pago" value="mitad"> Mitad transferencia / mitad efectivo</label>
-
-        <textarea id="notas" rows="3" placeholder="Notas (sin pan, extra picante, referencia, etc.)"></textarea>
-        <button class="btn cta" id="whatsBtn">Enviar por WhatsApp</button>
+  <!-- Drawer móvil -->
+  <div id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer-backdrop" data-close></div>
+    <aside class="drawer-panel">
+      <header class="drawer-head">
+        <strong>Tu pedido</strong>
+        <button class="drawer-close" data-close>✕</button>
+      </header>
+      <div id="drawerCart"></div>
+      <div class="drawer-total">
+        <span>Total</span><strong id="drawerTotal">$0.00</strong>
       </div>
-    </div>
-  </aside>
-</main>
+      <button id="goToForm" class="cta" type="button">Ir al formulario</button>
+    </aside>
+  </div>
 
 <script>
-/* ================== LOGO (DATA URI) ===================
-   Pega AQUÍ tu cadena base64 COMPLETA (la que me diste),
-   cambiando el prefijo a:  data:image/jpeg;base64,
-   Ejemplo:
-   const LOGO_DATA_URI = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...";
-*/
-const LOGO_DATA_URI = "data:image/jpeg;base64,PASTE_TU_BASE64_AQUI";
+/* ===========================
+   CONFIG
+=========================== */
+const SELLER_WA = "525636364089";     // +52 563 636 4089
+const PRICE_EXTRA = 10;
 
-/* ================== CONFIG ================== */
-const SELLER_WA = "525636364089";
-const money = n => `$${Number(n).toFixed(2)}`;
-const isServiceOpen = d => {
-  if (!d) return false;
-  const day = d.getDay(); // 0 dom .. 6 sab
-  const h = d.getHours();
-  const isFSD = (day===5 || day===6 || day===0); // vie, sab, dom
-  return isFSD && h>=16 && h<21;
-};
-
-/* ================== MENÚ ================== */
-const ING_BASE = ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada","Queso Chihuahua"];
-const SABORES = ["Tamarindo","BBQ","Parmesano","Mango Habanero"];
-const ALITAS_BASE = ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"];
-
-const MENU = [
-  {cat:"Hamburguesas", nombre:"Hamburguesa sencilla", precio:65, toppings:ING_BASE},
-  {cat:"Hamburguesas", nombre:"Hamburguesa doble carne", precio:95, toppings:ING_BASE.filter(i=>i!=="Queso Chihuahua")}, // precio actualizado
-  {cat:"Alitas", nombre:"Alitas 7 pz", precio:75, toppings:ALITAS_BASE, sabores:SABORES, mitad:true},
-  {cat:"Alitas", nombre:"Alitas 12 pz", precio:115, toppings:ALITAS_BASE, sabores:SABORES, mitad:true},
-  {cat:"Alitas", nombre:"Alitas 24 pz", precio:210, toppings:ALITAS_BASE, sabores:SABORES, mitad:true},
-  {cat:"Extras", nombre:"Salsa mango habanero", precio:10, extra:true},
-  {cat:"Extras", nombre:"Salsa tamarindo", precio:10, extra:true},
-  {cat:"Extras", nombre:"Crema parmesano", precio:10, extra:true},
-  {cat:"Extras", nombre:"Salsa BBQ", precio:10, extra:true},
-  {cat:"Extras", nombre:"Aderezo ranch", precio:10, extra:true},
-  {cat:"Producto de la semana", nombre:"Hamburguesa Flamin'Hot + Papas", precio:115,
-    toppings:["Mayonesa con chipotle","Queso Chihuahua","Catsup","Lechuga","Mostaza","Cebolla caramelizada","Tocino","Salsa de queso","Cheetos Flaming Hot"]},
-  {cat:"Producto de la semana", nombre:"Doriburguer Crunch", precio:115,
-    toppings:["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Cebolla caramelizada","Queso Oaxaca","Guacamole","Aderezo Ranch","Doritos Nacho"]},
+/* ===========================
+   DATA (productos)
+=========================== */
+const CATS = [
+  {
+    titulo: "Hamburguesas",
+    items: [
+      {
+        nombre: "Hamburguesa sencilla",
+        precio: 65,
+        img: "",
+        desc: "Elige tus ingredientes",
+        opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada","Queso Chihuahua"]
+      },
+      {
+        nombre: "Hamburguesa doble carne",
+        precio: 95,
+        img: "",
+        desc: "Elige salsas y vegetales",
+        opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada"]
+      }
+    ]
+  },
+  {
+    titulo: "Alitas",
+    items: [
+      {
+        nombre: "Alitas 7 pz",
+        precio: 75,
+        img: "",
+        desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
+        opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
+        halfAllowed: false
+      },
+      {
+        nombre: "Alitas 12 pz",
+        precio: 115,
+        img: "",
+        desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
+        opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
+        halfAllowed: true
+      },
+      {
+        nombre: "Alitas 24 pz",
+        precio: 210,
+        img: "",
+        desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
+        opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
+        sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
+        halfAllowed: true
+      }
+    ]
+  },
+  {
+    titulo: "Producto de la semana",
+    items: [
+      {
+        nombre: "Hamburguesa Flamin'Hot + Papas",
+        precio: 115,
+        img: "",
+        desc: "Picantita y crujiente",
+        opciones: ["Mayonesa con chipotle","Queso Chihuahua","Catsup","Lechuga","Mostaza","Cebolla caramelizada","Tocino","Salsa de queso","Cheetos Flaming Hot"]
+      },
+      {
+        nombre: "Doriburguer Crunch",
+        precio: 115,
+        img: "",
+        desc: "Crujiente con Doritos Nacho",
+        opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Cebolla caramelizada","Queso Oaxaca","Guacamole","Aderezo Ranch","Doritos Nacho"]
+      }
+    ]
+  }
 ];
 
-let cart=[];
+const EXTRAS = [
+  "Salsa Mango Habanero",
+  "Salsa Tamarindo",
+  "Crema Parmesano",
+  "Salsa BBQ",
+  "Aderezo Ranch"
+];
 
-/* ================== RENDER MENÚ ================== */
-function chip(label, id){ return `<label class="chip"><input type="checkbox" id="${id}" value="${label}"> ${label}</label>` }
+/* ===========================
+   HELPERS & STATE
+=========================== */
+let cart = [];
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const money = n => `$${Number(n).toFixed(2)}`;
 
+/* Servicio: vie(5), sáb(6), dom(0) · 16–21 h (4–9 pm) */
+const SERVICE_DAYS = new Set([5,6,0]);
+function isServiceWindow(date){
+  if(!(date instanceof Date) || isNaN(date)) return false;
+  const d = date.getDay(), h = date.getHours();
+  return SERVICE_DAYS.has(d) && h >= 16 && h < 21;
+}
+
+/* ===========================
+   RENDER MENÚ (con “mitad y mitad” en 12 y 24)
+=========================== */
 function renderMenu(){
-  const $menu = document.getElementById('menu');
-  $menu.innerHTML = "";
+  const wrap = document.getElementById('menu');
+  wrap.innerHTML = '';
+  CATS.forEach(cat=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-body">
+      <h3 class="section-title">${cat.titulo}</h3>
+      <div class="list"></div>
+    </div>`;
+    wrap.appendChild(card);
+    const list = card.querySelector('.list');
 
-  const cats = [...new Set(MENU.map(i=>i.cat))];
-  cats.forEach(cat=>{
-    const block = document.createElement('div');
-    block.className="block card__section";
-    block.innerHTML = `<h3 class="title">${cat}</h3>`;
-    const items = MENU.filter(i=>i.cat===cat);
-    items.forEach((item, idx)=>{
-      const row = document.createElement('div'); row.className="row";
-      const idxGlobal = MENU.indexOf(item);
-
-      // izquierda (info + opciones)
-      const left = document.createElement('div');
-      left.innerHTML = `
-        <div style="font-weight:700">${item.nombre}</div>
-        ${item.toppings?.length ? `<div class="muted">Elige tus ingredientes</div>
-        <div class="chips">${item.toppings.map((t,i)=>chip(t,`t_${idxGlobal}_${i}`)).join("")}</div>`:""}
-        ${item.sabores ? `
-          <div class="muted" style="margin-top:6px">Sabor(es)</div>
-          <div class="chips">
-            ${item.sabores.map((s,i)=>chip(s,`s_${idxGlobal}_${i}`)).join("")}
+    cat.items.forEach((p, idx)=>{
+      const idBase = `${cat.titulo}-${idx}`.replace(/\s+/g,'-').toLowerCase();
+      const row = document.createElement('div');
+      row.className = p.img ? 'item item--withimg' : 'item';
+      row.innerHTML = `
+        ${p.img ? `
+          <div class="item-left">
+            <img class="thumb" src="${p.img}" alt="${p.nombre}" onerror="this.style.display='none'">
+            <div>
+              <div class="item-name">${p.nombre}</div>
+              <div class="item-desc">${p.desc||''}</div>
+              <div class="options" id="${idBase}-opts">
+                ${ (p.opciones||[]).map((op)=>
+                  `<label class="chip">
+                    <input type="checkbox" data-kind="opt" data-id="${idBase}" value="${op}">
+                    ${op}
+                  </label>`).join('') }
+                ${ p.sabores ? `
+                    <label class="chip">
+                      <span>Sabor:</span>
+                      <select data-kind="flavorA" data-id="${idBase}">
+                        ${p.sabores.map(s=>`<option>${s}</option>`).join('')}
+                      </select>
+                    </label>
+                    ${ p.halfAllowed ? `
+                      <label class="chip">
+                        <input type="checkbox" data-kind="halfToggle" data-id="${idBase}"> Mitad y mitad
+                      </label>
+                      <label class="chip" id="${idBase}-halfBox" style="display:none;">
+                        <span>2° sabor:</span>
+                        <select data-kind="flavorB" data-id="${idBase}">
+                          ${p.sabores.map(s=>`<option>${s}</option>`).join('')}
+                        </select>
+                      </label>
+                    `: '' }
+                ` : '' }
+              </div>
+            </div>
           </div>
-          ${item.mitad ? `<div class="chips" style="margin-top:6px">
-             <label class="chip"><input type="checkbox" id="half_${idxGlobal}"> Mitad y mitad (elige 2 sabores)</label>
-          </div>`:""}
-        `:""}
+        ` : `
+          <div>
+            <div class="item-name">${p.nombre}</div>
+            <div class="item-desc">${p.desc||''}</div>
+            <div class="options" id="${idBase}-opts">
+              ${ (p.opciones||[]).map((op)=>
+                `<label class="chip">
+                  <input type="checkbox" data-kind="opt" data-id="${idBase}" value="${op}">
+                  ${op}
+                </label>`).join('') }
+            </div>
+          </div>
+        `}
+        <div class="price">${money(p.precio)}</div>
+        <div>
+          <input type="number" min="1" value="1" class="qty" id="${idBase}-qty">
+          <button class="btn btn-add" data-add="${idBase}">Agregar</button>
+        </div>
       `;
+      list.appendChild(row);
 
-      // precio
-      const price = document.createElement('div');
-      price.className="price";
-      price.textContent = money(item.precio);
+      // toggle mitad/mitad
+      const halfToggle = row.querySelector(`input[data-kind="halfToggle"][data-id="${idBase}"]`);
+      if(halfToggle){
+        halfToggle.addEventListener('change', ()=>{
+          const box = document.getElementById(`${idBase}-halfBox`);
+          box.style.display = halfToggle.checked ? 'inline-flex' : 'none';
+        });
+      }
 
-      // cantidad + botón
-      const cta = document.createElement('div');
-      cta.innerHTML = `
-        <input class="qty" id="q_${idxGlobal}" type="number" min="1" value="1">
-        <button class="btn" id="add_${idxGlobal}">Agregar</button>
-      `;
+      // Agregar al carrito
+      row.querySelector(`[data-add="${idBase}"]`).addEventListener('click', ()=>{
+        const qty = Math.max(1, parseInt($(`#${idBase}-qty`).value||'1',10));
+        const opts = [...document.querySelectorAll(`input[data-id="${idBase}"][data-kind="opt"]:checked`)].map(x=>x.value);
+        const flavorA = document.querySelector(`select[data-id="${idBase}"][data-kind="flavorA"]`);
+        const flavorB = document.querySelector(`select[data-id="${idBase}"][data-kind="flavorB"]`);
+        const halfOn  = document.querySelector(`input[data-id="${idBase}"][data-kind="halfToggle"]`);
 
-      row.appendChild(left); row.appendChild(price); row.appendChild(cta); block.appendChild(row);
+        const config = { opciones: opts };
+        if(flavorA) config.sabor = flavorA.value;
+        if(halfOn && halfOn.checked && flavorB) config.sabor2 = flavorB.value;
 
-      // evento agregar
-      setTimeout(()=>{
-        document.getElementById(`add_${idxGlobal}`).onclick = ()=>{
-          const qty = Math.max(1, parseInt(document.getElementById(`q_${idxGlobal}`).value||"1",10));
-          const toppings = (item.toppings||[]).filter((t,i)=>document.getElementById(`t_${idxGlobal}_${i}`)?.checked);
-          let sabores = [];
-          if(item.sabores){
-            sabores = item.sabores.filter((s,i)=>document.getElementById(`s_${idxGlobal}_${i}`)?.checked);
-            const half = document.getElementById(`half_${idxGlobal}`)?.checked;
-            if(half){
-              // fuerza máximo dos sabores
-              sabores = sabores.slice(0,2);
-              if(sabores.length===1) sabores.push("(mitad clásica)");
-              if(sabores.length===0) sabores = ["Mitad 1","Mitad 2"];
-            }
-          }
-          cart.push({nombre:item.nombre, precio:item.precio, qty, toppings, sabores, extra:item.extra===true});
-          renderCart();
-          window.scrollTo({top:0,behavior:'smooth'});
-        };
+        cart.push({ nombre: p.nombre, precio: p.precio, qty, config });
+        renderCart();
+
+        // Limpieza
+        document.querySelectorAll(`input[data-id="${idBase}"][data-kind="opt"]`).forEach(c=> c.checked=false);
+        if(flavorA) flavorA.selectedIndex = 0;
+        if(flavorB) flavorB.selectedIndex = 0;
+        if(halfToggle){ halfToggle.checked=false; document.getElementById(`${idBase}-halfBox`).style.display='none'; }
+        $(`#${idBase}-qty`).value = 1;
       });
     });
-    $menu.appendChild(block);
+  });
+
+  // EXTRAS
+  const exWrap = document.getElementById('extras');
+  exWrap.innerHTML = EXTRAS.map((ex,i)=>`
+    <label class="chip">
+      <input type="checkbox" class="ex" data-ex="${i}"> ${ex}
+      <input type="number" min="1" value="1" class="qty" style="width:58px" data-ex-qty="${i}">
+      <span class="muted">@ $${PRICE_EXTRA}</span>
+    </label>
+  `).join('');
+  $$('.ex').forEach(chk=>{
+    chk.addEventListener('change', ()=>{
+      const i = chk.dataset.ex;
+      if(chk.checked){
+        const q = Math.max(1, parseInt($(`[data-ex-qty="${i}"]`).value||'1',10));
+        cart.push({ nombre:`Extra: ${EXTRAS[i]}`, precio: PRICE_EXTRA, qty: q, config:{} });
+        renderCart();
+      }
+    });
   });
 }
 
-/* ================== CARRITO ================== */
-function renderCart(){
-  const $c = document.getElementById('cart');
-  $c.innerHTML = "";
-  let total = 0;
-
-  if(cart.length===0){
-    $c.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
-    document.getElementById('subtotal').textContent = money(0);
-    return;
+/* ===========================
+   CARRITO (desktop + drawer)
+=========================== */
+function formatCfg(cfg){
+  if(!cfg) return '';
+  const parts=[];
+  if(cfg.sabor && cfg.sabor2){
+    parts.push(`Sabores: ${cfg.sabor} / ${cfg.sabor2}`);
+  }else if(cfg.sabor){
+    parts.push(`Sabor: ${cfg.sabor}`);
   }
-
-  cart.forEach((it, i)=>{
-    total += it.precio * it.qty;
-    const div = document.createElement('div');
-    div.className = "cart-row";
-    const det = [];
-    if(it.toppings?.length) det.push(it.toppings.join(", "));
-    if(it.sabores?.length) det.push("Sabores: " + it.sabores.join(" / "));
-    div.innerHTML = `
-      <div>
-        <div><b>${it.qty}× ${it.nombre}</b></div>
-        ${det.length? `<div class="muted">${det.join(" · ")}</div>`:""}
-      </div>
-      <div class="mini">
-        <button class="iconbtn" onclick="chg(${i},-1)">–</button>
-        <button class="iconbtn" onclick="chg(${i},+1)">+</button>
-        <button class="iconbtn" onclick="delItem(${i})">✕</button>
-        <b>${money(it.precio*it.qty)}</b>
-      </div>
-    `;
-    $c.appendChild(div);
-  });
-  document.getElementById('subtotal').textContent = money(total);
+  if(cfg.opciones && cfg.opciones.length) parts.push(cfg.opciones.join(', '));
+  return parts.join(' · ');
 }
-function chg(i, d){ cart[i].qty = Math.max(1, cart[i].qty + d); renderCart(); }
-function delItem(i){ cart.splice(i,1); renderCart(); }
 
-/* ================== WHATSAPP ================== */
-function toWhats(){
-  if(cart.length===0){ alert("Tu carrito está vacío"); return; }
-
-  const nombre = document.getElementById('nombre').value.trim();
-  const direccion = document.getElementById('direccion').value.trim();
-  const zona = document.getElementById('zona').value;
-  const cuando = document.getElementById('cuando').value;
-  const pago = [...document.querySelectorAll('input[name="pago"]')].find(r=>r.checked)?.value || "transferencia";
-  const notas = document.getElementById('notas').value.trim();
-
-  if(!nombre || !direccion || !zona){ alert("Completa nombre, dirección y zona."); return; }
-  if(zona==="Otra") document.getElementById('zonaWarn').style.display = "block";
-  else document.getElementById('zonaWarn').style.display = "none";
-
-  const lines = [];
-  lines.push("Nuevo pedido — Capialitas Jaz");
-  lines.push("────────────────────────");
+function drawCartList(targetUl){
+  targetUl.innerHTML = '';
   cart.forEach((it, idx)=>{
-    lines.push(`${idx+1}. ${it.qty}× ${it.nombre} — ${money(it.precio*it.qty)}`);
-    if(it.toppings?.length) lines.push(`   · ${it.toppings.join(", ")}`);
-    if(it.sabores?.length)  lines.push(`   · ${it.sabores.join(" / ")}`);
+    const li = document.createElement('li');
+    li.className='cart-row';
+    li.innerHTML = `
+      <div>
+        <b>${it.qty}× ${it.nombre}</b>
+        ${ formatCfg(it.config) ? `<div class="muted" style="font-size:12px">${formatCfg(it.config)}</div>` : '' }
+      </div>
+      <div class="muted">${money(it.precio)}</div>
+      <div><button class="icon-btn" data-dec="${idx}">−</button> <button class="icon-btn" data-inc="${idx}">+</button></div>
+      <div><button class="icon-btn" data-del="${idx}">✕</button></div>
+    `;
+    targetUl.appendChild(li);
   });
-  const total = cart.reduce((s,i)=>s+i.precio*i.qty,0);
-  lines.push("────────────────────────");
-  lines.push(`Subtotal: ${money(total)}`);
 
-  lines.push("");
-  lines.push(`Cliente: ${nombre}`);
-  lines.push(`Dirección: ${direccion}`);
-  lines.push(`Zona: ${zona}${zona==="Otra"?" (posible fuera de zona)":""}`);
-
-  let avisoHorario = "";
-  let fechaStr = "";
-  if(cuando){
-    const d = new Date(cuando);
-    fechaStr = d.toLocaleString("es-MX");
-    if(!isServiceOpen(d)) avisoHorario = " (fuera de horario; pedido sobre pedido)";
-  }
-  if(fechaStr) lines.push(`Entrega: ${fechaStr}${avisoHorario}`);
-
-  if(notas) lines.push(`Notas: ${notas}`);
-
-  lines.push("");
-  lines.push(`Pago: ${pago==="transferencia" ? "Transferencia" : "Mitad transferencia / mitad efectivo"}`);
-
-  const text = encodeURIComponent(lines.join("\n"));
-  window.open(`https://wa.me/${SELLER_WA}?text=${text}`, "_blank");
+  // Acciones
+  targetUl.querySelectorAll('[data-dec]').forEach(b=> b.addEventListener('click', ()=>{ const i=+b.dataset.dec; cart[i].qty=Math.max(1,cart[i].qty-1); renderCart(); }));
+  targetUl.querySelectorAll('[data-inc]').forEach(b=> b.addEventListener('click', ()=>{ const i=+b.dataset.inc; cart[i].qty++; renderCart(); }));
+  targetUl.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=>{ const i=+b.dataset.del; cart.splice(i,1); renderCart(); }));
 }
 
-/* ================== INIT ================== */
-document.getElementById("logo").src = LOGO_DATA_URI;
+function renderCart(){
+  const list = document.getElementById('cartList');
+  drawCartList(list);
+
+  const subtotal = cart.reduce((s,i)=> s + i.precio*i.qty, 0);
+  document.getElementById('subtotal').textContent = money(subtotal);
+
+  // FAB & Drawer
+  let total=0, count=0; cart.forEach(i=>{ total+=i.precio*i.qty; count+=i.qty; });
+  document.getElementById('fabTotal').textContent = money(total);
+  document.getElementById('fabCount').textContent = count;
+
+  const dList = document.getElementById('drawerCart');
+  drawCartList(dList);
+  document.getElementById('drawerTotal').textContent = money(total);
+}
+
+/* ===========================
+   Drawer móvil
+=========================== */
+const fabBtn = document.getElementById('fabCart');
+const drawer = document.getElementById('drawer');
+
+function openDrawer(){ drawer.setAttribute('aria-hidden','false'); }
+function closeDrawer(){ drawer.setAttribute('aria-hidden','true'); }
+
+fabBtn.addEventListener('click', openDrawer);
+drawer.querySelectorAll('[data-close]').forEach(b=> b.addEventListener('click', closeDrawer));
+document.getElementById('goToForm').addEventListener('click', ()=>{
+  closeDrawer();
+  const form = document.getElementById('orderForm');
+  if(form) form.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ===========================
+   SUBMIT → WhatsApp (formato limpio + validación horario)
+=========================== */
+document.getElementById('orderForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  if(cart.length===0){ alert('Tu carrito está vacío'); return; }
+
+  const fd = new FormData(e.target);
+  const nombre   = fd.get('nombre');
+  const direccion= fd.get('direccion');
+  const cuando   = fd.get('cuando');
+  const pago     = fd.get('pago');
+  const notas    = fd.get('notas');
+
+  // Validación de horario (vie, sáb, dom · 4–9 pm)
+  const whenDate = cuando ? new Date(cuando) : null;
+  if(whenDate && !isServiceWindow(whenDate)){
+    const ok = confirm('⚠️ El horario seleccionado está fuera de servicio (viernes, sábado y domingo de 4:00–9:00 pm). ¿Deseas continuar como PRE-ORDEN?');
+    if(!ok) return;
+  }
+
+  // Construir mensaje
+  const L = [];
+  L.push(`*Nuevo pedido — Capialitas Jaz*`);
+  L.push('');
+
+  cart.forEach((it)=>{
+    L.push(`• ${it.qty}× ${it.nombre} — $${(it.precio*it.qty).toFixed(2)}`);
+    const det = [];
+    if(it.config?.sabor && it.config?.sabor2){
+      det.push(`Sabores: ${it.config.sabor} / ${it.config.sabor2}`);
+    }else if(it.config?.sabor){
+      det.push(`Sabor: ${it.config.sabor}`);
+    }
+    if(it.config?.opciones?.length) det.push(it.config.opciones.join(', '));
+    if(det.length) L.push(`   _${det.join(' · ')}_`);
+  });
+
+  const subtotal = cart.reduce((s,i)=> s + i.precio*i.qty, 0);
+  L.push('');
+  L.push(`*Subtotal:* $${subtotal.toFixed(2)}`);
+  L.push('');
+  L.push(`*Cliente:* ${nombre}`);
+  L.push(`*Dirección:* ${direccion}`);
+  if(whenDate) L.push(`*Horario de entrega:* ${whenDate.toLocaleString('es-MX')}`);
+  L.push(`*Pago:* ${pago==='transferencia' ? 'Transferencia' : 'Mitad transferencia / mitad efectivo'}`);
+  if(notas) L.push(`*Notas:* ${notas}`);
+  L.push('');
+  L.push('Pedido sobre pedido ✅');
+
+  const text = encodeURIComponent(L.join('\n')); // salto de línea correcto
+  const url  = `https://wa.me/${SELLER_WA}?text=${text}`;
+  window.open(url,'_blank');
+});
+
+/* ===========================
+   INIT
+=========================== */
 renderMenu();
 renderCart();
-document.getElementById('whatsBtn').onclick = toWhats;
 </script>
 </body>
 </html>
+
+
