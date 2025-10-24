@@ -113,7 +113,7 @@
       <img
         class="logo"
         alt="Capialitas Jaz"
-        src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGBgYHBgcICAcKCwoLCg8ODAwODRYQERQVGBYcHB0gJCEiICIkJCQqKi4yMjIuOTk5OTlGSkZFRUVFRUVFRUVB/…(cadena base64 completa aquí)…"
+        src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGBgYHBgcICAcKCwoLCg8ODAwODRYQERQVGBYcHB0gJCEiICIkJCQqKi4yMjIuOTk5OTlGSkZFRUVFRUVFRUVB/2wCEAQcHBw0NDhAQEhASEhISFBISEhISFBISEhISFBISEhISFBISEhISFBISEhISFBISEhISFBISEhISFBISEhISFBI/3QAEAA//2gAMAwEAAhEDEQA/AP35qtu2k3bQ6Z1gP0mCwQm3m8qgM3Lw3yq6KFM5m3Rr1bYpQ9QnQmJ7z2WJpQ4r2c6b8g8Qy0nq7B+qv7ZgQF1l1s2m0m/RGz9HfH0p2JgqK3q9k6x5GfJx5q+Xh1PXqZcVq7J7M3m0q4zY0m1mY3m3gO1bqN0Yw3Vbq0o4Jv1G2jWw3sg3mWfM3l7GDT6fW7yW3o3lB0m5q7U3oX9S7o0Q1Ww5r5wJQq1mJxZ9Q6l7zH8q2rGqJ7aJ2u8bV1k9m3z+1b6r2m8eR5R+o3qV+f8A6U9b0+/wD/2Q=="
         onerror="this.style.display='none'">
       <div class="brand">
         <h1>Capialitas Jaz</h1>
@@ -137,7 +137,7 @@
       <aside id="orderSection" class="card">
         <div class="card-body">
           <h2 class="section-title">Tu pedido</h2>
-        <ul id="cartList"></ul>
+          <ul id="cartList"></ul>
           <div class="total-line"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
           <hr style="border:none;border-top:1px dashed #f1d3d3;margin:10px 0">
           <form id="orderForm" class="form">
@@ -199,7 +199,7 @@ const CATS = [
       {
         nombre: "Hamburguesa sencilla",
         precio: 65,
-        img: "", /* si luego subes: "ham-sencilla.jpg" */
+        img: "",
         desc: "Elige tus ingredientes",
         opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada","Queso Chihuahua"]
       },
@@ -281,7 +281,7 @@ const $  = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const money = n => `$${Number(n).toFixed(2)}`;
 
-/* Servicio: vie(5), sáb(6), dom(0) · 16–21 h */
+/* Servicio: vie(5), sáb(6), dom(0) · 16–21 h (4–9 pm) */
 const SERVICE_DAYS = new Set([5,6,0]);
 function isServiceWindow(date){
   if(!(date instanceof Date) || isNaN(date)) return false;
@@ -290,7 +290,7 @@ function isServiceWindow(date){
 }
 
 /* ===========================
-   RENDER MENÚ (con “mitad y mitad”)
+   RENDER MENÚ (con “mitad y mitad” en 12 y 24)
 =========================== */
 function renderMenu(){
   const wrap = document.getElementById('menu');
