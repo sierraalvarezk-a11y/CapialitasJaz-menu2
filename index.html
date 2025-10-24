@@ -109,7 +109,12 @@
 <body>
   <div class="container">
     <header class="site-header">
-      <img src="logo.jpg" alt="Capialitas Jaz" class="logo" onerror="this.style.display='none'">
+      <!-- LOGO INCRUSTADO (data-URI) -->
+      <img
+        class="logo"
+        alt="Capialitas Jaz"
+        src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGBgYHBgcICAcKCwoLCg8ODAwODRYQERQVGBYcHB0gJCEiICIkJCQqKi4yMjIuOTk5OTlGSkZFRUVFRUVFRUVB/…(cadena base64 completa aquí)…"
+        onerror="this.style.display='none'">
       <div class="brand">
         <h1>Capialitas Jaz</h1>
         <p>Alitas con sabor y ternura</p>
@@ -132,7 +137,7 @@
       <aside id="orderSection" class="card">
         <div class="card-body">
           <h2 class="section-title">Tu pedido</h2>
-          <ul id="cartList"></ul>
+        <ul id="cartList"></ul>
           <div class="total-line"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
           <hr style="border:none;border-top:1px dashed #f1d3d3;margin:10px 0">
           <form id="orderForm" class="form">
@@ -185,7 +190,7 @@ const SELLER_WA = "525636364089";     // +52 563 636 4089
 const PRICE_EXTRA = 10;
 
 /* ===========================
-   DATA (productos) con imágenes
+   DATA (productos)
 =========================== */
 const CATS = [
   {
@@ -194,14 +199,14 @@ const CATS = [
       {
         nombre: "Hamburguesa sencilla",
         precio: 65,
-        img: "ham-sencilla.jpg",
+        img: "", /* si luego subes: "ham-sencilla.jpg" */
         desc: "Elige tus ingredientes",
         opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada","Queso Chihuahua"]
       },
       {
         nombre: "Hamburguesa doble carne",
-        precio: 95,  // solicitado
-        img: "ham-doble.jpg",
+        precio: 95,
+        img: "",
         desc: "Elige salsas y vegetales",
         opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Jitomate","Cebolla caramelizada"]
       }
@@ -213,7 +218,7 @@ const CATS = [
       {
         nombre: "Alitas 7 pz",
         precio: 75,
-        img: "alitas-7.jpg",
+        img: "",
         desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
         opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
         sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
@@ -222,7 +227,7 @@ const CATS = [
       {
         nombre: "Alitas 12 pz",
         precio: 115,
-        img: "alitas-12.jpg",
+        img: "",
         desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
         opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
         sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
@@ -231,7 +236,7 @@ const CATS = [
       {
         nombre: "Alitas 24 pz",
         precio: 210,
-        img: "alitas-24.jpg",
+        img: "",
         desc: "Incluye: Lechuga, zanahoria, pepino, Jugo Maggi, Salsa inglesa, Aderezo Ranch",
         opciones: ["Lechuga","Zanahoria","Pepino","Jugo Maggi","Salsa inglesa","Aderezo Ranch"],
         sabores: ["Tamarindo","BBQ","Parmesano","Mango Habanero"],
@@ -245,14 +250,14 @@ const CATS = [
       {
         nombre: "Hamburguesa Flamin'Hot + Papas",
         precio: 115,
-        img: "flaminhot.jpg",
+        img: "",
         desc: "Picantita y crujiente",
         opciones: ["Mayonesa con chipotle","Queso Chihuahua","Catsup","Lechuga","Mostaza","Cebolla caramelizada","Tocino","Salsa de queso","Cheetos Flaming Hot"]
       },
       {
         nombre: "Doriburguer Crunch",
         precio: 115,
-        img: "doriburguer.jpg",
+        img: "",
         desc: "Crujiente con Doritos Nacho",
         opciones: ["Mayonesa","Catsup","Mostaza","Lechuga","Chiles jalapeño","Cebolla caramelizada","Queso Oaxaca","Guacamole","Aderezo Ranch","Doritos Nacho"]
       }
@@ -285,7 +290,7 @@ function isServiceWindow(date){
 }
 
 /* ===========================
-   RENDER MENÚ (con imágenes y "mitad y mitad")
+   RENDER MENÚ (con “mitad y mitad”)
 =========================== */
 function renderMenu(){
   const wrap = document.getElementById('menu');
@@ -501,7 +506,7 @@ document.getElementById('orderForm').addEventListener('submit', e=>{
   const pago     = fd.get('pago');
   const notas    = fd.get('notas');
 
-  // Validación de horario
+  // Validación de horario (vie, sáb, dom · 4–9 pm)
   const whenDate = cuando ? new Date(cuando) : null;
   if(whenDate && !isServiceWindow(whenDate)){
     const ok = confirm('⚠️ El horario seleccionado está fuera de servicio (viernes, sábado y domingo de 4:00–9:00 pm). ¿Deseas continuar como PRE-ORDEN?');
